@@ -2,8 +2,8 @@
 {
     using System.IO;
     using System.Threading.Tasks;
-    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Sapher.Extensions;
 
@@ -20,8 +20,8 @@
                                     "StepName",
                                     typeof(TestHandleInput),
                                     stepConfig => stepConfig
-                                        .AddSuccessHandler(typeof(TestHandleSuccess))
-                                        .AddCompensationHandler(typeof(TestHandleCompensation))))
+                                        .AddResponseHandler(typeof(TestHandleSuccess))
+                                        .AddResponseHandler(typeof(TestHandleCompensation))))
                         .AddHostedService<TestService>())
                  .UseConsoleLifetime();
 

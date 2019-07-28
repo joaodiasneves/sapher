@@ -1,7 +1,6 @@
 ﻿namespace Sapher
 {
     using System.Threading.Tasks;
-    using Persistence.Model;
 
     public interface ISapherStep
     {
@@ -9,6 +8,6 @@
 
         void Init();
 
-        Task Deliver<T>(T message, MessageSlip messageSlip) where T : class;
+        Task Deliver<T>(T message, Dtos.MessageSlip messageSlip) where T : class;
     }
 }

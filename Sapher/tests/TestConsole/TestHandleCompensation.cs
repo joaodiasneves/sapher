@@ -8,15 +8,15 @@
 
     public class TestCompensationMessage { }
 
-    public class TestHandleCompensation : IHandlesCompensation<TestCompensationMessage>
+    public class TestHandleCompensation : IHandlesResponse<TestCompensationMessage>
     {
-        public Task<Result> Compensate(TestCompensationMessage message, SapherStepData sapherData)
+        public Task<ResponseResult> Execute(TestCompensationMessage message, SapherStepData data)
         {
             Console.WriteLine("Executing TestCompensationMessage");
-            var result = new Result
+            var result = new ResponseResult
             {
-                DataToPersist = sapherData.DataToPersist,
-                IsSuccess = true
+                DataToPersist = data.DataToPersist,
+                State = Sapher.Dtos.ResponseResultState.Compensated
             };
 
             return Task.FromResult(result);

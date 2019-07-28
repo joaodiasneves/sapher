@@ -8,16 +8,16 @@
 
     public class TestSuccessMessage { }
 
-    public class TestHandleSuccess : IHandlesSuccess<TestSuccessMessage>
+    public class TestHandleSuccess : IHandlesResponse<TestSuccessMessage>
     {
         public bool HandlesFinalMessage { get; set; }
 
-        public Task<Result> Execute(TestSuccessMessage message, SapherStepData data)
+        public Task<ResponseResult> Execute(TestSuccessMessage message, SapherStepData data)
         {
             Console.WriteLine("Executing TestSuccessMessage");
-            var result = new Result
+            var result = new ResponseResult
             {
-                IsSuccess = true,
+                State = Sapher.Dtos.ResponseResultState.Successful,
                 DataToPersist = data.DataToPersist
             };
 

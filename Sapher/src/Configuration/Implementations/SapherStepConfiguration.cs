@@ -11,28 +11,24 @@
 
         public Type InputMessageType { get; }
 
-        public IHandlesStepInput InputHandler { get; }
+        public IHandlesInput InputHandler { get; }
 
         public ISapherDataRepository DataRepository { get; }
 
-        public IDictionary<Type, IHandlesSuccess> SuccessHandlers { get; }
-
-        public IDictionary<Type, IHandlesCompensation> CompensationHandlers { get; }
+        public IDictionary<Type, IHandlesResponse> ResponseHandlers { get; }
 
         public SapherStepConfiguration(
             string stepName,
             Type inputMessageType,
-            IHandlesStepInput inputHandler,
+            IHandlesInput inputHandler,
             ISapherDataRepository dataRepository,
-            IDictionary<Type, IHandlesSuccess> successHandlers,
-            IDictionary<Type, IHandlesCompensation> compensationHandlers)
+            IDictionary<Type, IHandlesResponse> responseHandlers)
         {
             this.StepName = stepName;
             this.InputMessageType = inputMessageType;
             this.InputHandler = inputHandler;
             this.DataRepository = dataRepository;
-            this.SuccessHandlers = successHandlers;
-            this.CompensationHandlers = compensationHandlers;
+            this.ResponseHandlers = responseHandlers;
         }
     }
 }

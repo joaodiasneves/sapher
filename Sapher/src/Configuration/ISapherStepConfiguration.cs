@@ -11,12 +11,10 @@
 
         Type InputMessageType { get; }
 
-        IHandlesStepInput InputHandler { get; }
+        IHandlesInput InputHandler { get; }
 
         ISapherDataRepository DataRepository { get; }
 
-        IDictionary<Type, IHandlesSuccess> SuccessHandlers { get; }
-
-        IDictionary<Type, IHandlesCompensation> CompensationHandlers { get; }
+        IDictionary<Type, IHandlesResponse> ResponseHandlers { get; }
     }
 }

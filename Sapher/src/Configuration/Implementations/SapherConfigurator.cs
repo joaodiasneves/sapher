@@ -31,7 +31,7 @@
             Type inputHandlerType,
             Action<ISapherStepConfigurator> configure)
         {
-            if (!HandlersFactory.TryToGenerateHandlerInfo<IHandlesStepInput>(
+            if (!HandlersFactory.TryToGenerateHandlerInfo<IHandlesInput>(
                 inputHandlerType,
                 this.serviceCollection,
                 out var inputHandlerInstance,

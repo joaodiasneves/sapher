@@ -3,9 +3,9 @@
     using System.Threading.Tasks;
     using Dtos;
 
-    public interface IHandlesStepInput { }
+    public interface IHandlesInput { }
 
-    public interface IHandlesStepInput<in T> : IHandlesStepInput where T : class
+    public interface IHandlesInput<in T> : IHandlesInput where T : class
     {
         Task<InputResult> Execute(T message);
     }

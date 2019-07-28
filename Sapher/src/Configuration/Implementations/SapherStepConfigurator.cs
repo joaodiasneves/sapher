@@ -3,24 +3,23 @@
     using System;
     using System.Collections.Generic;
     using Exceptions;
-    using Persistence;
     using Handlers;
     using Microsoft.Extensions.DependencyInjection;
+    using Persistence;
 
     public class SapherStepConfigurator : ISapherStepConfigurator
     {
         private readonly string name;
         private readonly Type inputMessageType;
-        private readonly IHandlesStepInput inputHandler;
+        private readonly IHandlesInput inputHandler;
         private readonly ISapherDataRepository dataRepository;
         private readonly IServiceCollection serviceCollection;
-        private readonly IDictionary<Type, IHandlesSuccess> successHandlers;
-        private readonly IDictionary<Type, IHandlesCompensation> compensationHandlers;
+        private readonly IDictionary<Type, IHandlesResponse> responseHandlers;
 
         internal SapherStepConfigurator(
             string name,
             Type inputMessageType,
-            IHandlesStepInput inputHandler,
+            IHandlesInput inputHandler,
             ISapherDataRepository dataRepository,
             IServiceCollection serviceCollection)
         {
@@ -30,8 +29,7 @@
             this.dataRepository = dataRepository;
             this.serviceCollection = serviceCollection;
 
-            this.successHandlers = new Dictionary<Type, IHandlesSuccess>();
-            this.compensationHandlers = new Dictionary<Type, IHandlesCompensation>();
+            this.responseHandlers = new Dictionary<Type, IHandlesResponse>();
         }
 
         internal ISapherStepConfiguration Configure()
@@ -41,41 +39,22 @@
                 this.inputMessageType,
                 this.inputHandler,
                 this.dataRepository,
-                this.successHandlers,
-                this.compensationHandlers);
+                this.responseHandlers);
         }
 
-        public ISapherStepConfigurator AddSuccessHandler(Type successHandlerType)
+        public ISapherStepConfigurator AddResponseHandler(Type responseHandlerType)
         {
-            if (!HandlersFactory.TryToGenerateHandlerInfo<IHandlesSuccess>(
-                successHandlerType,
+            if (!HandlersFactory.TryToGenerateHandlerInfo<IHandlesResponse>(
+                responseHandlerType,
                 this.serviceCollection,
-                out var successHandlerInstance,
-                out var successMessageType,
+                out var responseHandlerInstance,
+                out var responseMessageType,
                 out var outputMessage))
             {
-                throw new SapherException(outputMessage);
-            }
-            // TODO - VAlidate that the GenericTypeDefinition is not used in input or compensation handlers
-
-            this.successHandlers.Add(successMessageType, successHandlerInstance);
-            return this;
-        }
-
-        public ISapherStepConfigurator AddCompensationHandler(Type compensationHandlerType)
-        {
-            if (!HandlersFactory.TryToGenerateHandlerInfo<IHandlesCompensation>(
-                compensationHandlerType,
-                this.serviceCollection,
-                out var compensationHandlerInstance,
-                out var compensationMessageType,
-                out var outputMessage))
-            {
-                throw new SapherException(outputMessage);
+                throw new SapherException(outputMessage); // TODO IMprove exceptions
             }
 
-            // TODO - VAlidate that the GenericTypeDefinition is not used in input or compensation handlers
-            this.compensationHandlers.Add(compensationMessageType, compensationHandlerInstance);
+            this.responseHandlers.Add(responseMessageType, responseHandlerInstance);
             return this;
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace Sapher
 {
-    using Persistence.Model;
+    using Dtos;
 
     public interface ISapher
     {

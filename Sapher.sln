@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher", "Sapher\src\Sapher.csproj", "{DF0824C5-68F8-4AAE-8286-E963E50F67F6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestConsole", "Sapher\tests\TestConsole\TestConsole.csproj", "{D9BC89D7-6C40-4703-99A9-E93B9EF612CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsageSample", "Sapher\tests\TestConsole\UsageSample.csproj", "{D9BC89D7-6C40-4703-99A9-E93B9EF612CA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher.Persistence", "Sapher.Persistence\Sapher.Persistence.csproj", "{C8BCB31D-2C12-4ED1-9CD7-A3E36B65B1A2}"
 EndProject

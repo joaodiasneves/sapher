@@ -29,7 +29,7 @@
                     sd.StepName,
                     stepName,
                     StringComparison.InvariantCultureIgnoreCase)
-                && sd.OutputMessageIdsState.Keys.Any(id =>
+                && sd.PublishedMessageIdsResponseState.Keys.Any(id =>
                 string.Equals(
                     id,
                     outputMessageId,
@@ -38,7 +38,7 @@
         public void Save(SapherStepData data)
         {
             var result = this.Load(data.Id);
-            if(result != null)
+            if (result != null)
             {
                 this.stepData.Remove(result);
             }

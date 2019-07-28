@@ -3,8 +3,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using Configuration;
+    using Dtos;
     using Exceptions;
-    using Persistence.Model;
 
     public class Sapher : ISapher
     {
@@ -23,7 +23,7 @@
 
         internal void SetupSteps()
         {
-            if (this.configuration.SapherSteps != null && this.configuration.SapherSteps.Any())
+            if (this.configuration.SapherSteps?.Any() == true)
             {
                 this.steps = this.configuration.SapherSteps;
 
@@ -34,7 +34,7 @@
             }
             else
             {
-                throw new SapherException("Trying to Use Sapher without defining any step");
+                throw new SapherException("Trying to Use Sapher without defining any step"); // TODO - Improve exceptions
             }
         }
 

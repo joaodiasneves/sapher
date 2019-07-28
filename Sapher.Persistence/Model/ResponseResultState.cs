@@ -1,11 +1,10 @@
 ﻿namespace Sapher.Persistence.Model
 {
-    public enum OutputState
+    public enum ResponseResultState
     {
         None = 0,
         Successful = 1,
         Compensated = 2,
-        FailedOnSuccess = 3,
-        FailedOnCompensation = 4
+        Failed = 3
     }
 }

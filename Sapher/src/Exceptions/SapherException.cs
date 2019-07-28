@@ -1,7 +1,6 @@
 ﻿namespace Sapher.Exceptions
 {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Runtime.Serialization;
 
@@ -14,7 +13,7 @@
 
         public SapherException(string message, params KeyValuePair<string, string>[] pairs) : base(message)
         {
-            if(pairs != null)
+            if (pairs != null)
             {
                 foreach (var pair in pairs)
                 {

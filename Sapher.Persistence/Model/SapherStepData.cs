@@ -12,7 +12,7 @@
 
         public StepState State { get; set; }
 
-        public IDictionary<string, OutputState> OutputMessageIdsState { get; set; }
+        public IDictionary<string, ResponseResultState> PublishedMessageIdsResponseState { get; set; }
 
         public object DataToPersist { get; set; }
 
@@ -26,10 +26,10 @@
 
             this.InputMessageSlip = inputMessageSlip;
 
-            this.OutputMessageIdsState = new Dictionary<string, OutputState>();
+            this.PublishedMessageIdsResponseState = new Dictionary<string, ResponseResultState>();
         }
 
-        public static string GenerateId(string stepName, string messageId) 
+        public static string GenerateId(string stepName, string messageId)
             => $"{stepName}-{messageId}";
     }
 }
