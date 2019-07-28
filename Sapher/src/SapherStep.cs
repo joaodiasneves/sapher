@@ -7,6 +7,7 @@
     using Configuration;
     using Dtos;
     using Handlers;
+    using Microsoft.Extensions.DependencyInjection;
     using Persistence;
     using TypeAdapters;
     using Model = Persistence.Model;
@@ -18,8 +19,9 @@
 
         private readonly ISapherStepConfiguration configuration;
         private Type inputMessageType;
-        private IHandlesInput inputHandler;
-        private IDictionary<Type, IHandlesResponse> responseHandlers = new Dictionary<Type, IHandlesResponse>();
+        private Type inputHandlerType;
+        private IDictionary<Type, Type> responseHandlers = new Dictionary<Type, Type>();
+        private IServiceCollection serviceCollection;
         private ISapherDataRepository dataRepository;
 
         internal SapherStep(ISapherStepConfiguration configuration)
@@ -38,10 +40,14 @@
             {
                 await this.HandleExecution(message, messageSlip).ConfigureAwait(false);
             }
-            else if (this.responseHandlers.TryGetValue(messageType, out var responseHandler))
+            else if (this.responseHandlers.TryGetValue(messageType, out var responseHandlerType))
             {
-                var responseHandlerCasted = (IHandlesResponse<T>)responseHandler;
-                await this.HandleResponse(responseHandlerCasted, message, messageSlip).ConfigureAwait(false);
+                var responseHandler = this.serviceCollection
+                    .BuildServiceProvider()
+                    .GetServices<IHandlesResponse<T>>()
+                    .First(h => h.GetType() == responseHandlerType);
+
+                await this.HandleResponse(responseHandler, message, messageSlip).ConfigureAwait(false);
             }
         }
 
@@ -64,8 +70,12 @@
 
             data = new Model.SapherStepData(messageSlip.ToDataModel(), this.StepName);
 
-            var handler = (IHandlesInput<T>)this.inputHandler;
-            var result = await handler
+            var inputHandler = this.serviceCollection
+                    .BuildServiceProvider()
+                    .GetServices<IHandlesInput<T>>()
+                    .First(h => h.GetType() == this.inputHandlerType);
+
+            var result = await inputHandler
                 .Execute(inputMessage)
                 .ConfigureAwait(false);
 

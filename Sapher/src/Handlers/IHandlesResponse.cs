@@ -4,13 +4,10 @@
     using Dtos;
     using Persistence.Model;
 
-    public interface IHandlesResponse
+    public interface IHandlesResponse<in T> where T : class
     {
         //bool HandlesFinalMessage { get; set; } TODO - Think about how to do this.
-    }
 
-    public interface IHandlesResponse<in T> : IHandlesResponse where T : class
-    {
         Task<ResponseResult> Execute(T message, SapherStepData data);
     }
 }

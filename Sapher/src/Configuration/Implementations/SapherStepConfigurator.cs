@@ -10,26 +10,26 @@
     public class SapherStepConfigurator : ISapherStepConfigurator
     {
         private readonly string name;
-        private readonly Type inputMessageType;
-        private readonly IHandlesInput inputHandler;
         private readonly ISapherDataRepository dataRepository;
         private readonly IServiceCollection serviceCollection;
-        private readonly IDictionary<Type, IHandlesResponse> responseHandlers;
+        private readonly Type inputMessageType;
+        private readonly Type inputHandlerType;
+        private readonly IDictionary<Type, Type> responseHandlers;
 
         internal SapherStepConfigurator(
             string name,
             Type inputMessageType,
-            IHandlesInput inputHandler,
+            Type inputHandlerType,
             ISapherDataRepository dataRepository,
             IServiceCollection serviceCollection)
         {
             this.name = name;
             this.inputMessageType = inputMessageType;
-            this.inputHandler = inputHandler;
+            this.inputHandlerType = inputHandlerType;
             this.dataRepository = dataRepository;
             this.serviceCollection = serviceCollection;
 
-            this.responseHandlers = new Dictionary<Type, IHandlesResponse>();
+            this.responseHandlers = new Dictionary<Type, Type>();
         }
 
         internal ISapherStepConfiguration Configure()
@@ -37,24 +37,23 @@
             return new SapherStepConfiguration(
                 this.name,
                 this.inputMessageType,
-                this.inputHandler,
+                this.inputHandlerType,
                 this.dataRepository,
                 this.responseHandlers);
         }
 
         public ISapherStepConfigurator AddResponseHandler(Type responseHandlerType)
         {
-            if (!HandlersFactory.TryToGenerateHandlerInfo<IHandlesResponse>(
+            if (!HandlersFactory.TryToRegisterResponseHandler(
                 responseHandlerType,
                 this.serviceCollection,
-                out var responseHandlerInstance,
                 out var responseMessageType,
                 out var outputMessage))
             {
                 throw new SapherException(outputMessage); // TODO IMprove exceptions
             }
 
-            this.responseHandlers.Add(responseMessageType, responseHandlerInstance);
+            this.responseHandlers.Add(responseMessageType, responseHandlerType);
             return this;
         }
     }

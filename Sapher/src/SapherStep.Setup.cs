@@ -6,8 +6,9 @@
         {
             this.StepName = this.configuration.StepName;
             this.inputMessageType = this.configuration.InputMessageType;
-            this.inputHandler = this.configuration.InputHandler;
+            this.inputHandlerType = this.configuration.InputHandlerType;
             this.dataRepository = this.configuration.DataRepository;
+            this.serviceCollection = this.configuration.ServiceCollection;
 
             this.SetupResponseHandlers();
         }

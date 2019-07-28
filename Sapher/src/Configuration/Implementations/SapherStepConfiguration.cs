@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using Handlers;
+    using Microsoft.Extensions.DependencyInjection;
     using Persistence;
 
     public class SapherStepConfiguration : ISapherStepConfiguration
@@ -11,22 +11,24 @@
 
         public Type InputMessageType { get; }
 
-        public IHandlesInput InputHandler { get; }
+        public Type InputHandlerType { get; }
 
         public ISapherDataRepository DataRepository { get; }
 
-        public IDictionary<Type, IHandlesResponse> ResponseHandlers { get; }
+        public IDictionary<Type, Type> ResponseHandlers { get; }
+
+        public IServiceCollection ServiceCollection { get; }
 
         public SapherStepConfiguration(
             string stepName,
             Type inputMessageType,
-            IHandlesInput inputHandler,
+            Type inputHandlerType,
             ISapherDataRepository dataRepository,
-            IDictionary<Type, IHandlesResponse> responseHandlers)
+            IDictionary<Type, Type> responseHandlers)
         {
             this.StepName = stepName;
             this.InputMessageType = inputMessageType;
-            this.InputHandler = inputHandler;
+            this.InputHandlerType = inputHandlerType;
             this.DataRepository = dataRepository;
             this.ResponseHandlers = responseHandlers;
         }

@@ -31,10 +31,9 @@
             Type inputHandlerType,
             Action<ISapherStepConfigurator> configure)
         {
-            if (!HandlersFactory.TryToGenerateHandlerInfo<IHandlesInput>(
+            if (!HandlersFactory.TryToRegisterInputHandler(
                 inputHandlerType,
                 this.serviceCollection,
-                out var inputHandlerInstance,
                 out var inputMessageType,
                 out var outputMessage))
             {
@@ -44,7 +43,7 @@
             var stepConfigurator = new SapherStepConfigurator(
                 name,
                 inputMessageType,
-                inputHandlerInstance,
+                inputHandlerType,
                 this.dataRepository,
                 this.serviceCollection);
 

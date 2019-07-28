@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-    using Handlers;
+    using Microsoft.Extensions.DependencyInjection;
     using Persistence;
 
     public interface ISapherStepConfiguration
@@ -11,10 +11,12 @@
 
         Type InputMessageType { get; }
 
-        IHandlesInput InputHandler { get; }
+        Type InputHandlerType { get; }
 
         ISapherDataRepository DataRepository { get; }
 
-        IDictionary<Type, IHandlesResponse> ResponseHandlers { get; }
+        IDictionary<Type, Type> ResponseHandlers { get; }
+
+        IServiceCollection ServiceCollection { get; }
     }
 }
