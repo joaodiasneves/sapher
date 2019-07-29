@@ -6,7 +6,15 @@
     using Dtos;
     using Handlers;
 
-    public class TestInputMessage { }
+    public class TestInputMessage
+    {
+        public int AnswerToEverything { get; set; } = 42;
+    }
+
+    public class TestObject
+    {
+        public int Life { get; set; }
+    }
 
     public class TestHandleInput : IHandlesInput<TestInputMessage>
     {
@@ -16,7 +24,7 @@
             return Task.FromResult(new InputResult
             {
                 OutputMessagesIds = new List<string> { Guid.NewGuid().ToString() },
-                DataToPersist = new { life = 42 },
+                DataToPersist = new TestObject { Life = message.AnswerToEverything },
                 State = InputResultState.Successful
             });
         }

@@ -1,6 +1,6 @@
 ﻿namespace Sapher.Dtos
 {
-    public class ResponseResult : Result
+    public class ResponseResult : HandlerResult
     {
         public ResponseResultState State { get; set; }
     }

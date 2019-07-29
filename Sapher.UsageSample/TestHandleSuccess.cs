@@ -4,7 +4,6 @@
     using System.Threading.Tasks;
     using Sapher.Dtos;
     using Sapher.Handlers;
-    using Sapher.Persistence.Model;
 
     public class TestSuccessMessage { }
 
@@ -12,13 +11,13 @@
     {
         public bool HandlesFinalMessage { get; set; }
 
-        public Task<ResponseResult> Execute(TestSuccessMessage message, SapherStepData data)
+        public Task<ResponseResult> Execute(TestSuccessMessage message, object previouslyPersistedData)
         {
             Console.WriteLine("Executing TestSuccessMessage");
             var result = new ResponseResult
             {
-                State = Sapher.Dtos.ResponseResultState.Successful,
-                DataToPersist = data.DataToPersist
+                State = ResponseResultState.Successful,
+                DataToPersist = previouslyPersistedData
             };
 
             return Task.FromResult(result);

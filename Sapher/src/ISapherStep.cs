@@ -1,6 +1,7 @@
 ﻿namespace Sapher
 {
     using System.Threading.Tasks;
+    using Dtos;
 
     public interface ISapherStep
     {
@@ -8,6 +9,6 @@
 
         void Init();
 
-        Task Deliver<T>(T message, Dtos.MessageSlip messageSlip) where T : class;
+        Task<StepResult> Deliver<T>(T message, Dtos.MessageSlip messageSlip) where T : class;
     }
 }

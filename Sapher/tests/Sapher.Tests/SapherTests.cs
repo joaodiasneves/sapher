@@ -1,10 +1,12 @@
 namespace Sapher.Tests
 {
-    using Microsoft.Extensions.DependencyInjection;
+    using System.Linq;
+    using System.Threading.Tasks;
     using Extensions;
-    using Xunit;
-    using TestHandlers;
     using FluentAssertions;
+    using Microsoft.Extensions.DependencyInjection;
+    using TestHandlers;
+    using Xunit;
 
     public class SapherTests
     {
@@ -29,6 +31,33 @@ namespace Sapher.Tests
             var sapherProvided = serviceProvider.GetRequiredService<ISapher>();
 
             sapherUse.Should().BeEquivalentTo(sapherProvided);
+        }
+
+        [Fact]
+        public async Task Deliver_DeliverMessage_Successful()
+        {
+            var serviceProvider = serviceCollection.BuildServiceProvider();
+            var sapher = serviceProvider.UseSapher();
+            var expectedDataPersisted = 50;
+
+            var deliveryResult = await sapher
+                .DeliverMessage(
+                    new TestInputMessage()
+                    {
+                        AnswerToEverything = expectedDataPersisted
+                    },
+                    Dtos.MessageSlip.GenerateNewMessageSlip())
+                .ConfigureAwait(false);
+
+            Assert.NotNull(deliveryResult);
+            Assert.Single(deliveryResult.StepsExecuted);
+            var stepExecuted = deliveryResult.StepsExecuted.Single();
+            Assert.NotNull(stepExecuted.InputHandlerResult);
+            Assert.Null(stepExecuted.ResponseHandlerResult);
+
+            Assert.Equal(
+                expectedDataPersisted,
+                ((TestObject)stepExecuted.InputHandlerResult.DataToPersist).Life);
         }
     }
 }

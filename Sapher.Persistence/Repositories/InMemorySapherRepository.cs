@@ -3,28 +3,29 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using Persistence.Model;
 
     public class InMemorySapherRepository : ISapherDataRepository
     {
         private readonly List<SapherStepData> stepData = new List<SapherStepData>();
 
-        public SapherStepData Load(string stepName, string inputMessageId)
-            => this.stepData.Find(sd =>
+        public Task<SapherStepData> Load(string stepName, string inputMessageId)
+            => Task.FromResult(this.stepData.Find(sd =>
                 string.Equals(
                     sd.Id,
                     SapherStepData.GenerateId(stepName, inputMessageId),
-                    StringComparison.InvariantCultureIgnoreCase));
+                    StringComparison.InvariantCultureIgnoreCase)));
 
-        public SapherStepData Load(string id)
-            => this.stepData.Find(sd =>
+        public Task<SapherStepData> Load(string id)
+            => Task.FromResult(this.stepData.Find(sd =>
                 string.Equals(
                     sd.Id,
                     id,
-                    StringComparison.InvariantCultureIgnoreCase));
+                    StringComparison.InvariantCultureIgnoreCase)));
 
-        public SapherStepData LoadFromConversationId(string stepName, string outputMessageId)
-            => this.stepData.Find(sd =>
+        public Task<SapherStepData> LoadFromConversationId(string stepName, string outputMessageId)
+            => Task.FromResult(this.stepData.Find(sd =>
                 string.Equals(
                     sd.StepName,
                     stepName,
@@ -33,17 +34,18 @@
                 string.Equals(
                     id,
                     outputMessageId,
-                    StringComparison.InvariantCultureIgnoreCase)));
+                    StringComparison.InvariantCultureIgnoreCase))));
 
-        public void Save(SapherStepData data)
+        public async Task<bool> Save(SapherStepData data)
         {
-            var result = this.Load(data.Id);
+            var result = await this.Load(data.Id).ConfigureAwait(false);
             if (result != null)
             {
                 this.stepData.Remove(result);
             }
 
             this.stepData.Add(data);
+            return true;
         }
     }
 }

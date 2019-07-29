@@ -9,7 +9,7 @@
     {
         public static ISapher UseSapher(this IServiceProvider serviceProvider)
         {
-            var sapher = serviceProvider.GetRequiredService<ISapher>() as Sapher;
+            var sapher = serviceProvider.GetRequiredService<ISapher>();
             sapher.Init();
             return sapher;
         }

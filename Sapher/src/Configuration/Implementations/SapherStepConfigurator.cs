@@ -39,6 +39,7 @@
                 this.inputMessageType,
                 this.inputHandlerType,
                 this.dataRepository,
+                this.serviceCollection,
                 this.responseHandlers);
         }
 

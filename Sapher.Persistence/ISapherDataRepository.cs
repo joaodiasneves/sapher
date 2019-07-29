@@ -1,15 +1,16 @@
 ﻿namespace Sapher.Persistence
 {
+    using System.Threading.Tasks;
     using Model;
 
     public interface ISapherDataRepository
     {
-        SapherStepData Load(string stepName, string inputMessageId);
+        Task<SapherStepData> Load(string stepName, string inputMessageId);
 
-        SapherStepData Load(string id);
+        Task<SapherStepData> Load(string id);
 
-        SapherStepData LoadFromConversationId(string id, string outputMessageId);
+        Task<SapherStepData> LoadFromConversationId(string stepName, string outputMessageId);
 
-        void Save(SapherStepData data);
+        Task<bool> Save(SapherStepData data);
     }
 }

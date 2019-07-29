@@ -24,12 +24,14 @@
             Type inputMessageType,
             Type inputHandlerType,
             ISapherDataRepository dataRepository,
+            IServiceCollection serviceCollection,
             IDictionary<Type, Type> responseHandlers)
         {
             this.StepName = stepName;
             this.InputMessageType = inputMessageType;
             this.InputHandlerType = inputHandlerType;
             this.DataRepository = dataRepository;
+            this.ServiceCollection = serviceCollection;
             this.ResponseHandlers = responseHandlers;
         }
     }

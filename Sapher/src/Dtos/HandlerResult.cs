@@ -1,7 +1,9 @@
 ﻿namespace Sapher.Dtos
 {
-    public class Result
+    public class HandlerResult
     {
+        internal string ExecutedHandlerName { get; set; }
+
         public object DataToPersist { get; set; }
     }
 }

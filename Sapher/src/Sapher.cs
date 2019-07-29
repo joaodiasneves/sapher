@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
     using Configuration;
     using Dtos;
     using Exceptions;
@@ -38,7 +39,11 @@
             }
         }
 
-        public void DeliverMessage<T>(T message, MessageSlip messageSlip, string stepName = null) where T : class
+        public async Task<DeliveryResult> DeliverMessage<T>(
+            T message,
+            MessageSlip messageSlip,
+            string stepName = null)
+            where T : class
         {
             var affectedSteps = this.steps;
 
@@ -52,10 +57,18 @@
                             System.StringComparison.InvariantCultureIgnoreCase));
             }
 
+            var tasks = new List<Task<StepResult>>();
+
             foreach (var step in affectedSteps)
             {
-                step.Deliver(message, messageSlip);
+                tasks.Add(step.Deliver(message, messageSlip));
             }
+
+            var stepResults = await Task.WhenAll(tasks).ConfigureAwait(false);
+            return new DeliveryResult
+            {
+                StepsExecuted = stepResults.ToList()
+            };
         }
     }
 }

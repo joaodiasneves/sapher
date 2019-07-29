@@ -16,6 +16,10 @@
 
         public object DataToPersist { get; set; }
 
+        public SapherStepData()
+        {
+        }
+
         public SapherStepData(
             MessageSlip inputMessageSlip,
             string stepName = null)

@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class InputResult : Result
+    public class InputResult : HandlerResult
     {
         public InputResultState State { get; set; }
 

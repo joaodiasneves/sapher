@@ -4,19 +4,18 @@
     using System.Threading.Tasks;
     using Dtos;
     using Handlers;
-    using Persistence.Model;
 
     public class TestCompensationMessage { }
 
     public class TestHandleCompensation : IHandlesResponse<TestCompensationMessage>
     {
-        public Task<ResponseResult> Execute(TestCompensationMessage message, SapherStepData data)
+        public Task<ResponseResult> Execute(TestCompensationMessage message, object previouslyPersistedData)
         {
             Console.WriteLine("Executing TestCompensationMessage");
             var result = new ResponseResult
             {
-                DataToPersist = data.DataToPersist,
-                State = Dtos.ResponseResultState.Compensated
+                DataToPersist = previouslyPersistedData,
+                State = ResponseResultState.Compensated
             };
 
             return Task.FromResult(result);

@@ -29,16 +29,19 @@
             this.configuration = configuration;
         }
 
-        public async Task Deliver<T>(T message, MessageSlip messageSlip) where T : class
+        public async Task<StepResult> Deliver<T>(T message, MessageSlip messageSlip) where T : class
         {
             // TODO  add logs.
             // TODO  trycatches
+            var stepResult = new StepResult(this.StepName);
 
             var messageType = typeof(T);
 
             if (messageType == this.inputMessageType)
             {
-                await this.HandleExecution(message, messageSlip).ConfigureAwait(false);
+                stepResult.InputHandlerResult = await this
+                    .HandleInput(message, messageSlip)
+                    .ConfigureAwait(false);
             }
             else if (this.responseHandlers.TryGetValue(messageType, out var responseHandlerType))
             {
@@ -47,25 +50,31 @@
                     .GetServices<IHandlesResponse<T>>()
                     .First(h => h.GetType() == responseHandlerType);
 
-                await this.HandleResponse(responseHandler, message, messageSlip).ConfigureAwait(false);
+                stepResult.ResponseHandlerResult = await this
+                    .HandleResponse(responseHandler, message, messageSlip)
+                    .ConfigureAwait(false);
             }
+
+            return null;
         }
 
-        private async Task HandleExecution<T>(
+        private async Task<InputResult> HandleInput<T>(
             T inputMessage,
             MessageSlip messageSlip)
             where T : class
         {
+            // TODO Simplify method?
             // Idempotency
             // TODO ensure versioning
-            var data = this.dataRepository.Load(
-                this.StepName,
-                messageSlip.MessageId);
+            var data = await this.dataRepository
+                .Load(this.StepName, messageSlip.MessageId)
+                .ConfigureAwait(false);
 
             if (data != null)
             {
-                await Task.CompletedTask; // TODO LOG
-                return;
+                // TODO LOG
+                // TODO Throw exception (?)
+                return null;
             }
 
             data = new Model.SapherStepData(messageSlip.ToDataModel(), this.StepName);
@@ -79,7 +88,9 @@
                 .Execute(inputMessage)
                 .ConfigureAwait(false);
 
-            data.DataToPersist = result.DataToPersist;
+            result.ExecutedHandlerName = this.inputHandlerType.Name;
+
+            data.DataToPersist = result.DataToPersist ?? data.DataToPersist;
             foreach (var ouputMessageId in result.OutputMessagesIds)
             {
                 data.PublishedMessageIdsResponseState.Add(ouputMessageId, Model.ResponseResultState.None);
@@ -89,39 +100,47 @@
                 ? Model.StepState.ExecutedInput
                 : Model.StepState.FailedOnExecution;
 
-            this.dataRepository.Save(data);
+            await this.dataRepository
+                .Save(data)
+                .ConfigureAwait(false);
+
+            return result;
         }
 
-        private async Task HandleResponse<T>(
+        private async Task<ResponseResult> HandleResponse<T>(
             IHandlesResponse<T> responseHandler,
             T successMessage,
             MessageSlip messageSlip)
             where T : class
         {
-            if (IsStepWaitingResponses(messageSlip, out var data)
-                && IsThisMessageNotProcessed(data, messageSlip))
+            var data = await this.dataRepository
+                .LoadFromConversationId(this.StepName, messageSlip.ConversationId)
+                .ConfigureAwait(false);
+
+            if (IsStepWaitingResponses(data) && IsThisMessageNotProcessed(data, messageSlip))
             {
                 var result = await responseHandler
-                    .Execute(successMessage, data)
+                    .Execute(successMessage, data.ToDto())
                     .ConfigureAwait(false);
 
-                UpdateData(data, result, messageSlip);
+                result.ExecutedHandlerName = responseHandler.GetType().Name;
+                UpdateDataAfterResponseExecution(data, result, messageSlip);
+                return result;
+            }
+            else
+            {
+                // TODO - Do Something here... Log. Throw exception, anything. Info Message in Result? Use NoneState?
+                return null;
             }
         }
 
-        private bool IsStepWaitingResponses(MessageSlip messageSlip, out Model.SapherStepData data)
-        {
-            data = this.dataRepository.LoadFromConversationId(
-               this.StepName,
-               messageSlip.ConversationId);
-
-            return data?.State == Model.StepState.None || data?.State == Model.StepState.ExecutedInput;
-        }
+        private bool IsStepWaitingResponses(Model.SapherStepData data)
+            => data?.State == Model.StepState.None || data?.State == Model.StepState.ExecutedInput;
 
         private bool IsThisMessageNotProcessed(Model.SapherStepData data, MessageSlip messageSlip)
             => data.PublishedMessageIdsResponseState[messageSlip.ConversationId] == Model.ResponseResultState.None;
 
-        private void UpdateData(
+        private void UpdateDataAfterResponseExecution(
             Model.SapherStepData data,
             ResponseResult result,
             MessageSlip messageSlip)
