@@ -31,7 +31,7 @@ namespace Sapher.Tests
         }
 
         [Fact]
-        public void UseSapher_RegistersISapherInDI_ReturnsTheSameObject()
+        public void UseSapher_RequireISapherFromDi_ReturnsTheSameObject()
         {
             // Act
             var sapherProvided = serviceProvider.GetRequiredService<ISapher>();
@@ -41,7 +41,7 @@ namespace Sapher.Tests
         }
 
         [Fact]
-        public async Task DeliverMessage_InputOfTwoSteps_TwoStepResultsWithNoResponseResult()
+        public async Task DeliverMessage_InputOfTwoSteps_TwoStepResultsWithResponseResultNull()
         {
             // Arrange
             const int expectedDataPersisted = 50;
@@ -79,7 +79,7 @@ namespace Sapher.Tests
         }
 
         [Fact]
-        public async Task DeliverMessage_ValidResponseMessageBeforeInput_OneStepIdentifiedWithResultsNull()
+        public async Task DeliverMessage_ValidResponseMessageBeforeInput_OneStepResultWithResultsNull()
         {
             // Act
             var deliveryResult = await this.sapher
@@ -101,7 +101,7 @@ namespace Sapher.Tests
         }
 
         [Fact]
-        public async Task DeliverMessage_ResponseMessageAfterInput_OneStepIdentifiedWithValidResponsesOnly()
+        public async Task DeliverMessage_ResponseMessageAfterInput_OneStepResultWithValidResponses()
         {
             // Arrange
             const int expectedDataPersisted = 50;
