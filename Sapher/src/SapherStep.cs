@@ -55,7 +55,7 @@
                     .ConfigureAwait(false);
             }
 
-            return null;
+            return stepResult;
         }
 
         private async Task<InputResult> HandleInput<T>(
@@ -83,7 +83,7 @@
                     .BuildServiceProvider()
                     .GetServices<IHandlesInput<T>>()
                     .First(h => h.GetType() == this.inputHandlerType);
-
+            // TODO Check if InputHandler == null
             var result = await inputHandler
                 .Execute(inputMessage)
                 .ConfigureAwait(false);
