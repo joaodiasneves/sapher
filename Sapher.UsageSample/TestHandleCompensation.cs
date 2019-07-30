@@ -1,4 +1,4 @@
-﻿namespace TestConsole
+﻿namespace UsageSample
 {
     using System;
     using System.Threading.Tasks;
@@ -9,7 +9,7 @@
 
     public class TestHandleCompensation : IHandlesResponse<TestCompensationMessage>
     {
-        public Task<ResponseResult> Execute(TestCompensationMessage message, object previouslyPersistedData)
+        public Task<ResponseResult> Execute(TestCompensationMessage message, MessageSlip messageSlip, object previouslyPersistedData)
         {
             Console.WriteLine("Executing TestCompensationMessage");
             var result = new ResponseResult

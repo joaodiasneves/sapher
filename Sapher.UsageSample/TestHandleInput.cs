@@ -1,4 +1,4 @@
-﻿namespace TestConsole
+﻿namespace UsageSample
 {
     using System;
     using System.Collections.Generic;
@@ -10,7 +10,7 @@
 
     public class TestHandleInput : IHandlesInput<TestInputMessage>
     {
-        public Task<InputResult> Execute(TestInputMessage message)
+        public Task<InputResult> Execute(TestInputMessage message, MessageSlip messageSlip)
         {
             Console.WriteLine("Executing TestInputMessage");
             return Task.FromResult(new InputResult

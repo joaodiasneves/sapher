@@ -1,4 +1,4 @@
-﻿namespace TestConsole
+﻿namespace UsageSample
 {
     using System;
     using System.Threading.Tasks;
@@ -11,7 +11,7 @@
     {
         public bool HandlesFinalMessage { get; set; }
 
-        public Task<ResponseResult> Execute(TestSuccessMessage message, object previouslyPersistedData)
+        public Task<ResponseResult> Execute(TestSuccessMessage message, MessageSlip messageSlip, object previouslyPersistedData)
         {
             Console.WriteLine("Executing TestSuccessMessage");
             var result = new ResponseResult

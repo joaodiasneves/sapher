@@ -7,6 +7,6 @@
     {
         //bool HandlesFinalMessage { get; set; } TODO - Think about how to do this.
 
-        Task<ResponseResult> Execute(T message, object previouslyPersistedData);
+        Task<ResponseResult> Execute(T message, MessageSlip messageSlip, object previouslyPersistedData);
     }
 }

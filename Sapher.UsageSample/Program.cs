@@ -1,4 +1,4 @@
-﻿namespace TestConsole
+﻿namespace UsageSample
 {
     using System.IO;
     using System.Threading.Tasks;

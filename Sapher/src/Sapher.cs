@@ -67,7 +67,7 @@
             var stepResults = await Task.WhenAll(tasks).ConfigureAwait(false);
             return new DeliveryResult
             {
-                StepsExecuted = stepResults.ToList()
+                StepsExecuted = stepResults.Where(s => s != null).ToList()
             };
         }
     }

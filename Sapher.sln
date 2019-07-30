@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher", "Sapher\src\Sapher
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher.Persistence", "Sapher.Persistence\Sapher.Persistence.csproj", "{C8BCB31D-2C12-4ED1-9CD7-A3E36B65B1A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sapher.Tests", "Sapher\tests\Sapher.Tests\Sapher.Tests.csproj", "{649D1796-01D6-4999-86EC-58B19C57E564}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher.Tests", "Sapher\tests\Sapher.Tests\Sapher.Tests.csproj", "{649D1796-01D6-4999-86EC-58B19C57E564}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher.UsageSample", "Sapher.UsageSample\Sapher.UsageSample.csproj", "{546B9F7E-68FF-440F-A922-1F415FD3E5A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsageSample", "Sapher.UsageSample\UsageSample.csproj", "{546B9F7E-68FF-440F-A922-1F415FD3E5A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

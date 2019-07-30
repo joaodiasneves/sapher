@@ -33,17 +33,27 @@
         {
             // TODO  add logs.
             // TODO  trycatches
-            var stepResult = new StepResult(this.StepName);
-
             var messageType = typeof(T);
 
-            if (messageType == this.inputMessageType)
+            var stepHandlesMessageAsInput = messageType == this.inputMessageType;
+            var stepHandleMessageAsResponse = this.responseHandlers
+                .TryGetValue(messageType, out var responseHandlerType);
+
+            StepResult stepResult = null;
+
+            if (stepHandlesMessageAsInput || stepHandleMessageAsResponse)
+            {
+                stepResult = new StepResult(this.StepName);
+            }
+            
+            if (stepHandlesMessageAsInput)
             {
                 stepResult.InputHandlerResult = await this
                     .HandleInput(message, messageSlip)
                     .ConfigureAwait(false);
             }
-            else if (this.responseHandlers.TryGetValue(messageType, out var responseHandlerType))
+
+            if (stepHandleMessageAsResponse)
             {
                 var responseHandler = this.serviceCollection
                     .BuildServiceProvider()
@@ -85,7 +95,7 @@
                     .First(h => h.GetType() == this.inputHandlerType);
             // TODO Check if InputHandler == null
             var result = await inputHandler
-                .Execute(inputMessage)
+                .Execute(inputMessage, messageSlip)
                 .ConfigureAwait(false);
 
             result.ExecutedHandlerName = this.inputHandlerType.Name;
@@ -120,7 +130,7 @@
             if (IsStepWaitingResponses(data) && IsThisMessageNotProcessed(data, messageSlip))
             {
                 var result = await responseHandler
-                    .Execute(successMessage, data.ToDto())
+                    .Execute(successMessage, messageSlip, data.DataToPersist)
                     .ConfigureAwait(false);
 
                 result.ExecutedHandlerName = responseHandler.GetType().Name;
@@ -129,7 +139,7 @@
             }
             else
             {
-                // TODO - Do Something here... Log. Throw exception, anything. Info Message in Result? Use NoneState?
+                // TODO - Log.
                 return null;
             }
         }

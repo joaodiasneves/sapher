@@ -8,5 +8,9 @@
             string name,
             Type inputHandlerType,
             Action<ISapherStepConfigurator> configure);
+
+        ISapherConfigurator AddStep(
+            string name,
+            Type inputHandlerType);
     }
 }

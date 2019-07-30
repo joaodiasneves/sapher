@@ -54,5 +54,32 @@
 
             return this;
         }
+
+        public ISapherConfigurator AddStep(
+            string name,
+            Type inputHandlerType)
+        {
+            if (!HandlersFactory.TryToRegisterInputHandler(
+                inputHandlerType,
+                this.serviceCollection,
+                out var inputMessageType,
+                out var outputMessage))
+            {
+                throw new SapherException(outputMessage);
+            }
+
+            var stepConfigurator = new SapherStepConfigurator(
+                name,
+                inputMessageType,
+                inputHandlerType,
+                this.dataRepository,
+                this.serviceCollection);
+
+            var stepConfiguration = stepConfigurator.Configure();
+
+            this.sapherSteps.Add(new SapherStep(stepConfiguration));
+
+            return this;
+        }
     }
 }

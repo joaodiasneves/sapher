@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Exceptions;
     using Handlers;
     using Microsoft.Extensions.DependencyInjection;
@@ -45,16 +46,35 @@
 
         public ISapherStepConfigurator AddResponseHandler(Type responseHandlerType)
         {
+            if (this.responseHandlers.Values.Contains(responseHandlerType))
+            {
+                return this;
+            }
+
             if (!HandlersFactory.TryToRegisterResponseHandler(
                 responseHandlerType,
                 this.serviceCollection,
-                out var responseMessageType,
+                out var responseMessageTypes,
                 out var outputMessage))
             {
                 throw new SapherException(outputMessage); // TODO IMprove exceptions
             }
+           
+            foreach (var responseMessageType in responseMessageTypes)
+            {
+                if(responseMessageType == inputMessageType)
+                {
+                    throw new SapherException(
+                        "Using the same Message as Input and Response in the same Step is not allowed.",
+                        Pair.Of("StepName", this.name),
+                        Pair.Of("MessageType", responseMessageType.Name),
+                        Pair.Of("InputHandler", this.inputHandlerType.Name),
+                        Pair.Of("ResponseHandler", responseHandlerType.Name));
+                }
 
-            this.responseHandlers.Add(responseMessageType, responseHandlerType);
+                this.responseHandlers.Add(responseMessageType, responseHandlerType);
+            }
+            
             return this;
         }
     }

@@ -5,6 +5,6 @@
 
     public interface IHandlesInput<in T> where T : class
     {
-        Task<InputResult> Execute(T message);
+        Task<InputResult> Execute(T message, MessageSlip messageSlip);
     }
 }

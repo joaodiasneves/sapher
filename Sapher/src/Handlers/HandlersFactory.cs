@@ -1,6 +1,7 @@
 ﻿namespace Sapher.Handlers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using Microsoft.Extensions.DependencyInjection;
@@ -13,25 +14,30 @@
             out Type messageType,
             out string outputMessage)
         {
-            return TryToRegisterHandler(
+            var result = TryToRegisterHandler(
                 typeof(IHandlesInput<>),
                 inputHandlerType,
                 serviceCollection,
-                out messageType,
+                false,
+                out var messageTypes,
                 out outputMessage);
+
+            messageType = messageTypes.Single();
+            return result;
         }
 
         public static bool TryToRegisterResponseHandler(
             Type responseHandlerType,
             IServiceCollection serviceCollection,
-            out Type messageType,
+            out IList<Type> messageTypes,
             out string outputMessage)
         {
             return TryToRegisterHandler(
                 typeof(IHandlesResponse<>),
                 responseHandlerType,
                 serviceCollection,
-                out messageType,
+                true,
+                out messageTypes,
                 out outputMessage);
         }
 
@@ -39,20 +45,30 @@
             Type sapherHandlerType,
             Type implementationHandlerType,
             IServiceCollection serviceCollection,
-            out Type messageType,
+            bool allowMultipleHandlers,
+            out IList<Type> messageTypes,
             out string outputMessage)
         {
-            messageType = default(Type);
+            messageTypes = new List<Type>();
             outputMessage = "Handler instantiated.";
 
-            var expectedType = sapherHandlerType;
-            var implementedInterface = implementationHandlerType
-                .GetInterfaces()
-                .FirstOrDefault(i => 
-                    i.IsGenericType 
-                    && i.GetGenericTypeDefinition() == expectedType);
+            if (implementationHandlerType.IsGenericType)
+            {
+                outputMessage = 
+                    $"{implementationHandlerType.Name} can not " +
+                    $"be a Generic definition";
+                return false;
+            }
 
-            if (implementedInterface == null)
+            var expectedType = sapherHandlerType;
+            var implementedInterfaces = implementationHandlerType
+                .GetInterfaces()
+                .Where(i =>
+                    i.IsGenericType
+                    && i.GetGenericTypeDefinition() == expectedType)
+                .ToList();
+
+            if (implementedInterfaces.Count == 0)
             {
                 outputMessage =
                     $"Expected implementation of generic {expectedType.Name}, " +
@@ -60,14 +76,21 @@
                 return false;
             }
 
-            if (implementationHandlerType.IsGenericType)
+            if (!allowMultipleHandlers
+                && implementedInterfaces.Count > 1)
             {
-                outputMessage = $"{implementationHandlerType.Name} can not be a Generic definition";
+                outputMessage =
+                    $"{implementationHandlerType.Name} can only " +
+                    $"implement {expectedType.Name} once";
                 return false;
             }
 
-            messageType = implementedInterface.GenericTypeArguments[0];
-            serviceCollection.AddTransient(implementedInterface, implementationHandlerType);
+            foreach (var implementedInterface in implementedInterfaces)
+            {
+                messageTypes.Add(implementedInterface.GenericTypeArguments[0]);
+                serviceCollection.AddTransient(implementedInterface, implementationHandlerType);
+            }
+            
             return true;
         }
     }
