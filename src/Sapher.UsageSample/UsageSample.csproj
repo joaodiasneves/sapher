@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Sapher\src\Sapher.csproj" />
+    <ProjectReference Include="..\Sapher\Sapher.csproj" />
   </ItemGroup>
 
 </Project>

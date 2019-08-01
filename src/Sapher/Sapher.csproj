@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Sapher.Persistence\Sapher.Persistence.csproj" />
+    <ProjectReference Include="..\Sapher.Persistence\Sapher.Persistence.csproj" />
   </ItemGroup>
 
 </Project>
