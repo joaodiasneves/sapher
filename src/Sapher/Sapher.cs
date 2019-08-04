@@ -10,6 +10,7 @@
     using global::Sapher.Logger.Extensions;
     using Logger;
     using Microsoft.Extensions.DependencyInjection;
+    using Polly;
 
     public class Sapher : ISapher
     {
@@ -37,46 +38,49 @@
             string stepName = null)
             where T : class
         {
-            var deliveryResult = new DeliveryResult();
-            var retryCount = 0;
-            RetryExecution:
-            try
+            var executionOutcome = await Policy
+              .Handle<SapherException>()
+              .Or<SapherConfigurationException>()
+              .Or<Exception>()
+              .WaitAndRetryAsync(
+                this.maxRetryAttempts,
+                _ => TimeSpan.FromMilliseconds(this.retryIntervalMs))
+              .ExecuteAndCaptureAsync(() => this.ExecuteDelivery(message, messageSlip, stepName))
+              .ConfigureAwait(false);
+
+            var result = executionOutcome.Result;
+
+            if (result == null)
             {
-                await this.ExecuteDelivery(message, messageSlip, deliveryResult, stepName).ConfigureAwait(false);
-            }
-            catch(SapherException sapherException)
-            {
-                this.logger.Warning(sapherException);
-                deliveryResult.IsDeliveryFailed = true;
-                deliveryResult.ErrorMessage = sapherException.Message;
-                deliveryResult.Exception = sapherException;
-            }
-            catch (Exception exception)
-            {
-                this.logger.Error(exception);
-                deliveryResult.IsDeliveryFailed = true;
-                deliveryResult.ErrorMessage = exception.Message;
-                deliveryResult.Exception = exception;
+                var finalException = executionOutcome.FinalException;
+                if (finalException.GetType() == typeof(SapherException))
+                {
+                    this.logger.Warning(finalException);
+                }
+                else
+                {
+                    this.logger.Error(finalException);
+                }
+
+                result = new DeliveryResult
+                {
+                    IsDeliveryFailed = true,
+                    ErrorMessage = finalException.Message,
+                    Exception = finalException
+                };
             }
 
-            retryCount++;
-
-            if (deliveryResult.IsDeliveryFailed && retryCount < this.maxRetryAttempts)
-            {
-                await Task.Delay(this.retryIntervalMs).ConfigureAwait(false);
-                goto RetryExecution; // TODO Improve retry mechanism and do retry tests
-            }
-
-            return deliveryResult;
+            return result;
         }
 
-        internal async Task ExecuteDelivery<T>(
+        internal async Task<DeliveryResult> ExecuteDelivery<T>(
             T message,
             MessageSlip messageSlip,
-            DeliveryResult deliveryResult,
             string stepName = null)
             where T : class
         {
+            var deliveryResult = new DeliveryResult();
+
             var affectedSteps = this.steps;
 
             if (!string.IsNullOrWhiteSpace(stepName))
@@ -98,6 +102,8 @@
 
             var stepResults = await Task.WhenAll(tasks).ConfigureAwait(false);
             deliveryResult.StepsExecuted = stepResults.Where(s => s != null).ToList();
+
+            return deliveryResult;
         }
 
         internal void SetupRetryPolicy()
