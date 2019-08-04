@@ -1,7 +1,35 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>Sapher</AssemblyName>
+    <RootNamespace>Sapher</RootNamespace>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Copyright>Copyright (c) 2019, Joao Dias Neves</Copyright>
+    <Description>Sapher provides assistance in Distributed transaction management by using Choreographed SAGA pattern</Description>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <Authors>Joao Dias Neves</Authors>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Label="NuspecProperties">
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <AssemblyTitle>Sapher</AssemblyTitle>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageIconUrl></PackageIconUrl>
+    <PackageProjectUrl>https://github.com/joaodiasneves/sapher</PackageProjectUrl>
+    <PackageTags>SAGA Choreography Idempotency Compensation Microservices Distributed Transactions</PackageTags>
+    <PackageReleaseNotes></PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
