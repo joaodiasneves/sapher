@@ -13,8 +13,6 @@
 
         Type InputHandlerType { get; }
 
-        ISapherDataRepository DataRepository { get; }
-
         IDictionary<Type, Type> ResponseHandlers { get; }
 
         IServiceCollection ServiceCollection { get; }

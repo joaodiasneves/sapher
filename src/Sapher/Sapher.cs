@@ -1,11 +1,14 @@
 ﻿namespace Sapher
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using Configuration;
     using Dtos;
     using Exceptions;
+    using Microsoft.Extensions.DependencyInjection;
+    using Persistence;
 
     public class Sapher : ISapher
     {
@@ -17,12 +20,12 @@
             this.configuration = configuration;
         }
 
-        public void Init()
+        public void Init(IServiceProvider serviceProvider)
         {
-            SetupSteps();
+            SetupSteps(serviceProvider);
         }
 
-        internal void SetupSteps()
+        internal void SetupSteps(IServiceProvider serviceProvider)
         {
             if (this.configuration.SapherSteps?.Any() == true)
             {
@@ -30,7 +33,7 @@
 
                 foreach (var step in this.steps)
                 {
-                    step.Init();
+                    step.Init(serviceProvider);
                 }
             }
             else
@@ -54,7 +57,7 @@
                         string.Equals(
                             s.StepName,
                             stepName,
-                            System.StringComparison.InvariantCultureIgnoreCase));
+                            StringComparison.InvariantCultureIgnoreCase));
             }
 
             var tasks = new List<Task<StepResult>>();

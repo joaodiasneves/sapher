@@ -1,14 +1,15 @@
 ﻿namespace Sapher.Configuration
 {
     using System;
-    using global::Sapher.Handlers;
+    using Logger;
+    using Persistence;
 
     public interface ISapherConfigurator
     {
-        ISapherConfigurator AddStep<T>(
-            string name,
-            Action<ISapherStepConfigurator> configure);
+        ISapherConfigurator AddStep<T>(string name, Action<ISapherStepConfigurator> configure = null);
 
-        ISapherConfigurator AddStep<T>(string name);
+        ISapherConfigurator AddLogger<T>() where T : class, ILogger;
+
+        ISapherConfigurator AddPersistence<T>() where T : class, ISapherDataRepository;
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace Sapher
 {
+    using System;
     using System.Threading.Tasks;
     using Dtos;
 
@@ -7,7 +8,7 @@
     {
         string StepName { get; set; }
 
-        void Init();
+        void Init(IServiceProvider serviceProvider);
 
         Task<StepResult> Deliver<T>(T message, Dtos.MessageSlip messageSlip) where T : class;
     }

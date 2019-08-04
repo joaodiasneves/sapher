@@ -10,7 +10,6 @@
     public class SapherStepConfigurator : ISapherStepConfigurator
     {
         private readonly string name;
-        private readonly ISapherDataRepository dataRepository;
         private readonly IServiceCollection serviceCollection;
         private readonly Type inputMessageType;
         private readonly Type inputHandlerType;
@@ -20,13 +19,11 @@
             string name,
             Type inputMessageType,
             Type inputHandlerType,
-            ISapherDataRepository dataRepository,
             IServiceCollection serviceCollection)
         {
             this.name = name;
             this.inputMessageType = inputMessageType;
             this.inputHandlerType = inputHandlerType;
-            this.dataRepository = dataRepository;
             this.serviceCollection = serviceCollection;
 
             this.responseHandlers = new Dictionary<Type, Type>();
@@ -38,7 +35,6 @@
                 this.name,
                 this.inputMessageType,
                 this.inputHandlerType,
-                this.dataRepository,
                 this.serviceCollection,
                 this.responseHandlers);
         }

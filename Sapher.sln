@@ -5,10 +5,6 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher", "src\Sapher\Sapher.csproj", "{B977F251-B39E-4988-B2C9-01EDBA76424E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher.Persistence", "src\Sapher.Persistence\Sapher.Persistence.csproj", "{DB4546A2-E33A-49B3-B2DF-1B0478C3B49A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsageSample", "src\Sapher.UsageSample\UsageSample.csproj", "{0C6DDB6D-F2E2-4C1D-8F58-F18ABB5813A3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher.Tests", "test\unit\Sapher.Tests\Sapher.Tests.csproj", "{B1D6FA78-590B-4E74-B288-304E379F0DEB}"
 EndProject
 Global
@@ -21,14 +17,6 @@ Global
 		{B977F251-B39E-4988-B2C9-01EDBA76424E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B977F251-B39E-4988-B2C9-01EDBA76424E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B977F251-B39E-4988-B2C9-01EDBA76424E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DB4546A2-E33A-49B3-B2DF-1B0478C3B49A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB4546A2-E33A-49B3-B2DF-1B0478C3B49A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB4546A2-E33A-49B3-B2DF-1B0478C3B49A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB4546A2-E33A-49B3-B2DF-1B0478C3B49A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0C6DDB6D-F2E2-4C1D-8F58-F18ABB5813A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C6DDB6D-F2E2-4C1D-8F58-F18ABB5813A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C6DDB6D-F2E2-4C1D-8F58-F18ABB5813A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C6DDB6D-F2E2-4C1D-8F58-F18ABB5813A3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B1D6FA78-590B-4E74-B288-304E379F0DEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1D6FA78-590B-4E74-B288-304E379F0DEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1D6FA78-590B-4E74-B288-304E379F0DEB}.Release|Any CPU.ActiveCfg = Release|Any CPU

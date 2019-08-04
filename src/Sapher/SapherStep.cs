@@ -12,7 +12,7 @@
     using TypeAdapters;
     using Model = Persistence.Model;
 
-    public partial class SapherStep : ISapherStep
+    public class SapherStep : ISapherStep
     {
         // TODO - Provide a Job executing in the background to check for Steps that never received all the answers
         public string StepName { get; set; }
@@ -20,13 +20,24 @@
         private readonly ISapherStepConfiguration configuration;
         private Type inputMessageType;
         private Type inputHandlerType;
-        private IDictionary<Type, Type> responseHandlers = new Dictionary<Type, Type>();
-        private IServiceCollection serviceCollection;
         private ISapherDataRepository dataRepository;
+        private IServiceProvider serviceProvider;
+        private IDictionary<Type, Type> responseHandlers = new Dictionary<Type, Type>();
 
         internal SapherStep(ISapherStepConfiguration configuration)
         {
             this.configuration = configuration;
+        }
+
+        public void Init(IServiceProvider serviceProvider)
+        {
+            this.StepName = this.configuration.StepName;
+            this.inputMessageType = this.configuration.InputMessageType;
+            this.inputHandlerType = this.configuration.InputHandlerType;
+            this.serviceProvider = serviceProvider;
+
+            this.SetupDataRepository();
+            this.SetupResponseHandlers();
         }
 
         public async Task<StepResult> Deliver<T>(T message, MessageSlip messageSlip) where T : class
@@ -55,13 +66,8 @@
 
             if (stepHandleMessageAsResponse)
             {
-                var responseHandler = this.serviceCollection
-                    .BuildServiceProvider()
-                    .GetServices<IHandlesResponse<T>>()
-                    .First(h => h.GetType() == responseHandlerType);
-
                 stepResult.ResponseHandlerResult = await this
-                    .HandleResponse(responseHandler, message, messageSlip)
+                    .HandleResponse(responseHandlerType, message, messageSlip)
                     .ConfigureAwait(false);
             }
 
@@ -89,8 +95,7 @@
 
             data = new Model.SapherStepData(messageSlip.ToDataModel(), this.StepName);
 
-            var inputHandler = this.serviceCollection
-                    .BuildServiceProvider()
+            var inputHandler = this.serviceProvider
                     .GetServices<IHandlesInput<T>>()
                     .First(h => h.GetType() == this.inputHandlerType);
             // TODO Check if InputHandler == null
@@ -118,11 +123,15 @@
         }
 
         private async Task<ResponseResult> HandleResponse<T>(
-            IHandlesResponse<T> responseHandler,
+            Type responseHandlerType,
             T successMessage,
             MessageSlip messageSlip)
             where T : class
         {
+            var responseHandler = this.serviceProvider
+                   .GetServices<IHandlesResponse<T>>()
+                   .First(h => h.GetType() == responseHandlerType);
+
             var data = await this.dataRepository
                 .LoadFromConversationId(this.StepName, messageSlip.ConversationId)
                 .ConfigureAwait(false);
@@ -189,6 +198,19 @@
             }
 
             // TODO Develop Background job that checks if the Step never had all the expected answers
+        }
+
+        internal void SetupResponseHandlers()
+        {
+            if (this.configuration.ResponseHandlers?.Count > 0)
+            {
+                this.responseHandlers = this.configuration.ResponseHandlers;
+            }
+        }
+
+        internal void SetupDataRepository()
+        {
+            this.dataRepository = serviceProvider.GetRequiredService<ISapherDataRepository>();
         }
     }
 }
