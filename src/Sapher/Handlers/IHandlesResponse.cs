@@ -1,5 +1,6 @@
 ﻿namespace Sapher.Handlers
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Dtos;
 
@@ -7,6 +8,6 @@
     {
         //bool HandlesFinalMessage { get; set; } TODO - Think about how to do this.
 
-        Task<ResponseResult> Execute(T message, MessageSlip messageSlip, object previouslyPersistedData);
+        Task<ResponseResult> Execute(T message, MessageSlip messageSlip, IDictionary<string, string> previouslyPersistedData);
     }
 }

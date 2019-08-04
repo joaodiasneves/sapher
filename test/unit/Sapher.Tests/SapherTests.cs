@@ -20,10 +20,10 @@ namespace Sapher.Tests
             // Arrange
             this.serviceCollection = new ServiceCollection();
             this.serviceCollection.AddSapher(sapherConfig => sapherConfig
-                .AddStep("TestInputWithResponses", typeof(TestHandler), stepConfig => stepConfig
-                    .AddResponseHandler(typeof(TestHandler))
-                    .AddResponseHandler(typeof(TestHandler)))
-                .AddStep("TestOnlyInput", typeof(TestHandler)));
+                .AddStep<TestHandler>("TestInputWithResponses", stepConfig => stepConfig
+                    .AddResponseHandler<TestHandler>()
+                    .AddResponseHandler<TestHandler>())
+                .AddStep<TestHandler>("TestOnlyInput"));
 
             this.serviceProvider = this.serviceCollection.BuildServiceProvider();
 
@@ -69,8 +69,7 @@ namespace Sapher.Tests
                 Assert.NotNull(stepExecuted.InputHandlerResult);
                 Assert.Null(stepExecuted.ResponseHandlerResult);
 
-                var dataToPersistCasted = ((TestDataObject)stepExecuted.InputHandlerResult.DataToPersist);
-                Assert.Equal(expectedDataPersisted, dataToPersistCasted.AnswerToEverything);
+                Assert.Equal(expectedDataPersisted, int.Parse(stepExecuted.InputHandlerResult.DataToPersist["AnswerToEverything"]));
                 Assert.Single(stepExecuted.InputHandlerResult.OutputMessagesIds);
                 var outputId = stepExecuted.InputHandlerResult.OutputMessagesIds.Single();
                 Assert.Equal(expectedOutputId, outputId);
@@ -143,7 +142,7 @@ namespace Sapher.Tests
             Assert.Null(stepExecuted.InputHandlerResult);
             Assert.NotNull(stepExecuted.ResponseHandlerResult);
             Assert.Equal(Dtos.ResponseResultState.Successful, stepExecuted.ResponseHandlerResult.State);
-            Assert.Equal(expectedDataPersisted, stepExecuted.ResponseHandlerResult.DataToPersist);
+            Assert.Equal(expectedDataPersisted, int.Parse(stepExecuted.ResponseHandlerResult.DataToPersist["AnswerToEverything"]));
         }
     }
 }

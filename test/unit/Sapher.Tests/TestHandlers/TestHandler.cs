@@ -39,24 +39,35 @@
             return Task.FromResult(new InputResult
             {
                 OutputMessagesIds = new List<string> { message.SimulatedOutputMessageId },
-                DataToPersist = new TestDataObject { AnswerToEverything = message.Value },
+                DataToPersist = new Dictionary<string, string>
+                {
+                    { "AnswerToEverything", message.Value.ToString() }
+                },
                 State = InputResultState.Successful
             });
         }
-
-        public Task<ResponseResult> Execute(TestSuccessMessage message, MessageSlip messageSlip, object previouslyPersistedData)
+        
+        public Task<ResponseResult> Execute(
+            TestSuccessMessage message,
+            MessageSlip messageSlip,
+            IDictionary<string, string> previouslyPersistedData)
         {
             Console.WriteLine("Executing TestSuccessMessage");
+            previouslyPersistedData["AnswerToEverything"] = message.TestValue.ToString();
+
             var result = new ResponseResult
             {
                 State = ResponseResultState.Successful,
-                DataToPersist = ((TestDataObject)previouslyPersistedData).AnswerToEverything = message.TestValue
+                DataToPersist = previouslyPersistedData
             };
 
             return Task.FromResult(result);
         }
 
-        public Task<ResponseResult> Execute(TestCompensationMessage message, MessageSlip messageSlip, object previouslyPersistedData)
+        public Task<ResponseResult> Execute(
+            TestCompensationMessage message,
+            MessageSlip messageSlip,
+            IDictionary<string, string> previouslyPersistedData)
         {
             Console.WriteLine("Compensating TestCompensationMessage");
             var result = new ResponseResult
@@ -68,7 +79,10 @@
             return Task.FromResult(result);
         }
 
-        public Task<ResponseResult> Execute(TestFailureMessage message, MessageSlip messageSlip, object previouslyPersistedData)
+        public Task<ResponseResult> Execute(
+            TestFailureMessage message,
+            MessageSlip messageSlip,
+            IDictionary<string,string> previouslyPersistedData)
         {
             Console.WriteLine("Executing TestFailureMessage");
             var result = new ResponseResult

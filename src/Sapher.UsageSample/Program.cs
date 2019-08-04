@@ -16,12 +16,9 @@
                  .ConfigureServices(serviceCollection =>
                     serviceCollection
                         .AddSapher(sapherConfig => sapherConfig
-                                .AddStep(
-                                    "StepName",
-                                    typeof(TestHandleInput),
-                                    stepConfig => stepConfig
-                                        .AddResponseHandler(typeof(TestHandleSuccess))
-                                        .AddResponseHandler(typeof(TestHandleCompensation))))
+                            .AddStep<TestHandleInput>("StepName", stepConfig => stepConfig
+                                .AddResponseHandler<TestHandleSuccess>()
+                                .AddResponseHandler<TestHandleCompensation>()))
                         .AddHostedService<TestService>())
                  .UseConsoleLifetime();
 

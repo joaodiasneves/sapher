@@ -26,11 +26,12 @@
             return new SapherConfiguration(sapherSteps);
         }
 
-        public ISapherConfigurator AddStep(
+        public ISapherConfigurator AddStep<T>(
             string name,
-            Type inputHandlerType,
             Action<ISapherStepConfigurator> configure)
         {
+            var inputHandlerType = typeof(T);
+
             if (!HandlersFactory.TryToRegisterInputHandler(
                 inputHandlerType,
                 this.serviceCollection,
@@ -55,10 +56,10 @@
             return this;
         }
 
-        public ISapherConfigurator AddStep(
-            string name,
-            Type inputHandlerType)
+        public ISapherConfigurator AddStep<T>(string name)
         {
+            var inputHandlerType = typeof(T);
+
             if (!HandlersFactory.TryToRegisterInputHandler(
                 inputHandlerType,
                 this.serviceCollection,

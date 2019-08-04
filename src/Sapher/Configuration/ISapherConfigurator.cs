@@ -1,16 +1,14 @@
 ﻿namespace Sapher.Configuration
 {
     using System;
+    using global::Sapher.Handlers;
 
     public interface ISapherConfigurator
     {
-        ISapherConfigurator AddStep(
+        ISapherConfigurator AddStep<T>(
             string name,
-            Type inputHandlerType,
             Action<ISapherStepConfigurator> configure);
 
-        ISapherConfigurator AddStep(
-            string name,
-            Type inputHandlerType);
+        ISapherConfigurator AddStep<T>(string name);
     }
 }

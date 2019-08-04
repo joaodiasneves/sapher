@@ -14,7 +14,7 @@
 
         public IDictionary<string, ResponseResultState> PublishedMessageIdsResponseState { get; set; }
 
-        public object DataToPersist { get; set; }
+        public IDictionary<string, string> DataToPersist { get; set; }
 
         public SapherStepData()
         {

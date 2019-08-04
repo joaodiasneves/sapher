@@ -16,7 +16,7 @@
             return Task.FromResult(new InputResult
             {
                 OutputMessagesIds = new List<string> { Guid.NewGuid().ToString() },
-                DataToPersist = new { life = 42 },
+                DataToPersist = new Dictionary<string, string> { { "life", "42" } },
                 State = InputResultState.Successful
             });
         }

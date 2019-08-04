@@ -4,6 +4,6 @@
 
     public interface ISapherStepConfigurator
     {
-        ISapherStepConfigurator AddResponseHandler(Type responseHandlerType);
+        ISapherStepConfigurator AddResponseHandler<T>();
     }
 }
