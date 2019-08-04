@@ -9,7 +9,6 @@
     using Handlers;
     using Microsoft.Extensions.DependencyInjection;
     using Persistence;
-    using TypeAdapters;
     using Model = Persistence.Model;
 
     public class SapherStep : ISapherStep
@@ -56,7 +55,7 @@
             {
                 stepResult = new StepResult(this.StepName);
             }
-            
+
             if (stepHandlesMessageAsInput)
             {
                 stepResult.InputHandlerResult = await this
@@ -93,11 +92,12 @@
                 return null;
             }
 
-            data = new Model.SapherStepData(messageSlip.ToDataModel(), this.StepName);
+            data = new Dtos.SapherStepData(messageSlip, this.StepName);
 
             var inputHandler = this.serviceProvider
-                    .GetServices<IHandlesInput<T>>()
-                    .First(h => h.GetType() == this.inputHandlerType);
+                .GetServices<IHandlesInput<T>>()
+                .FirstOrDefault(h => h.GetType() == this.inputHandlerType);
+
             // TODO Check if InputHandler == null
             var result = await inputHandler
                 .Execute(inputMessage, messageSlip)
@@ -108,12 +108,12 @@
             data.DataToPersist = result.DataToPersist ?? data.DataToPersist;
             foreach (var ouputMessageId in result.OutputMessagesIds)
             {
-                data.PublishedMessageIdsResponseState.Add(ouputMessageId, Model.ResponseResultState.None);
+                data.PublishedMessageIdsResponseState.Add(ouputMessageId, Dtos.ResponseResultState.None);
             }
 
-            data.State = result.State == InputResultState.Successful
-                ? Model.StepState.ExecutedInput
-                : Model.StepState.FailedOnExecution;
+            data.State = result.State == Dtos.InputResultState.Successful
+                ? Dtos.StepState.ExecutedInput
+                : Dtos.StepState.FailedOnExecution;
 
             await this.dataRepository
                 .Save(data)
@@ -129,8 +129,10 @@
             where T : class
         {
             var responseHandler = this.serviceProvider
-                   .GetServices<IHandlesResponse<T>>()
-                   .First(h => h.GetType() == responseHandlerType);
+                .GetServices<IHandlesResponse<T>>()
+                .FirstOrDefault(h => h.GetType() == responseHandlerType);
+
+            // TODO check if responsehandler is null
 
             var data = await this.dataRepository
                 .LoadFromConversationId(this.StepName, messageSlip.ConversationId)
@@ -153,47 +155,47 @@
             }
         }
 
-        private bool IsStepWaitingResponses(Model.SapherStepData data)
-            => data?.State == Model.StepState.None || data?.State == Model.StepState.ExecutedInput;
+        private bool IsStepWaitingResponses(Dtos.SapherStepData data)
+            => data?.State == Dtos.StepState.None || data?.State == Dtos.StepState.ExecutedInput;
 
-        private bool IsThisMessageNotProcessed(Model.SapherStepData data, MessageSlip messageSlip)
-            => data.PublishedMessageIdsResponseState[messageSlip.ConversationId] == Model.ResponseResultState.None;
+        private bool IsThisMessageNotProcessed(Dtos.SapherStepData data, MessageSlip messageSlip)
+            => data.PublishedMessageIdsResponseState[messageSlip.ConversationId] == Dtos.ResponseResultState.None;
 
         private void UpdateDataAfterResponseExecution(
-            Model.SapherStepData data,
+            Dtos.SapherStepData data,
             ResponseResult result,
             MessageSlip messageSlip)
         {
             data.DataToPersist = result.DataToPersist ?? data.DataToPersist;
-            data.PublishedMessageIdsResponseState[messageSlip.ConversationId] = result.State.ToDataModel();
+            data.PublishedMessageIdsResponseState[messageSlip.ConversationId] = result.State;
 
             EvaluateStepState(data);
             this.dataRepository.Save(data);
         }
 
-        private void EvaluateStepState(Model.SapherStepData data)
+        private void EvaluateStepState(Dtos.SapherStepData data)
         {
             if (data.PublishedMessageIdsResponseState
                 .All(responseState =>
-                    responseState.Value != Model.ResponseResultState.None))
+                    responseState.Value != Dtos.ResponseResultState.None))
             {
                 if (data.PublishedMessageIdsResponseState
                     .All(responseState =>
-                        responseState.Value == Model.ResponseResultState.Successful))
+                        responseState.Value == Dtos.ResponseResultState.Successful))
                 {
-                    data.State = Model.StepState.Successful;
+                    data.State = Dtos.StepState.Successful;
                 }
                 else if (data.PublishedMessageIdsResponseState
                     .Any(responseState =>
-                        responseState.Value == Model.ResponseResultState.Failed))
+                        responseState.Value == Dtos.ResponseResultState.Failed))
                 {
-                    data.State = Model.StepState.FailedOnResponses;
+                    data.State = Dtos.StepState.FailedOnResponses;
                 }
                 else if (data.PublishedMessageIdsResponseState
                     .Any(responseState =>
-                        responseState.Value == Model.ResponseResultState.Compensated))
+                        responseState.Value == Dtos.ResponseResultState.Compensated))
                 {
-                    data.State = Model.StepState.Compensated;
+                    data.State = Dtos.StepState.Compensated;
                 }
             }
 

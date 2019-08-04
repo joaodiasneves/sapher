@@ -1,4 +1,4 @@
-﻿namespace Sapher.TypeAdapters
+﻿namespace Sapher.Persistence.TypeAdapters
 {
     using System.Collections.Generic;
     using System.Linq;

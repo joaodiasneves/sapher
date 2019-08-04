@@ -1,7 +1,7 @@
 ﻿namespace Sapher.Persistence
 {
     using System.Threading.Tasks;
-    using Model;
+    using Dtos;
 
     public interface ISapherDataRepository
     {

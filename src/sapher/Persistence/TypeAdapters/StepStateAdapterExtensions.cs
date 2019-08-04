@@ -1,4 +1,4 @@
-﻿namespace Sapher.TypeAdapters
+﻿namespace Sapher.Persistence.TypeAdapters
 {
     using Model = Persistence.Model;
 

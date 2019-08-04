@@ -4,6 +4,21 @@
 
     public class SapherStepData
     {
+        public SapherStepData(MessageSlip messageSlip, string stepName)
+        {
+            this.StepName = string.IsNullOrWhiteSpace(stepName)
+                ? this.GetType().UnderlyingSystemType.Name
+                : stepName;
+
+            this.InputMessageSlip = messageSlip;
+
+            this.PublishedMessageIdsResponseState = new Dictionary<string, ResponseResultState>();
+        }
+
+        public SapherStepData()
+        {
+        }
+
         public string StepName { get; set; }
 
         public MessageSlip InputMessageSlip { get; set; }
