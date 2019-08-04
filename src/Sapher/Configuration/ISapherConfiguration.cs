@@ -5,5 +5,9 @@
     public interface ISapherConfiguration
     {
         IList<ISapherStep> SapherSteps { get; }
+
+        int MaxRetryAttempts { get; }
+
+        int RetryIntervalMs { get; }
     }
 }

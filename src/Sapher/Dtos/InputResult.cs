@@ -6,6 +6,6 @@
     {
         public InputResultState State { get; set; }
 
-        public IEnumerable<string> OutputMessagesIds { get; set; }
+        public IEnumerable<string> OutputMessagesIds { get; set; } = new List<string>();
     }
 }

@@ -6,9 +6,18 @@
     {
         public IList<ISapherStep> SapherSteps { get; }
 
-        public SapherConfiguration(IList<ISapherStep> sapherSteps)
+        public int MaxRetryAttempts { get; }
+
+        public int RetryIntervalMs { get; }
+
+        public SapherConfiguration(
+            IList<ISapherStep> sapherSteps,
+            int maxRetryAttempts,
+            int retryIntervalMs)
         {
             this.SapherSteps = sapherSteps;
+            this.MaxRetryAttempts = maxRetryAttempts;
+            this.RetryIntervalMs = retryIntervalMs;
         }
     }
 }

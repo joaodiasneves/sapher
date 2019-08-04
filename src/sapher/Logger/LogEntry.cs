@@ -1,16 +1,21 @@
 ﻿namespace Sapher.Logger
 {
     using System;
+    using System.Collections.Generic;
 
-    public enum LoggingEventType { Debug, Information, Warning, Error, Fatal };
+    public enum LoggingEventType { Verbose, Information, Warning, Error, Fatal }
 
     public class LogEntry
     {
-        public readonly LoggingEventType Severity;
-        public readonly string Message;
-        public readonly Exception Exception;
+        public LoggingEventType Severity { get; }
 
-        public LogEntry(LoggingEventType severity, string message, Exception exception = null)
+        public string Message { get; }
+
+        public Exception Exception { get; }
+
+        public IDictionary<string, string> AdditionalData { get; }
+
+        public LogEntry(LoggingEventType severity, string message, Exception exception = null, IDictionary<string, string> additionalData = null)
         {
             if (message == null) throw new ArgumentNullException(nameof(message));
             if (message?.Length == 0) throw new ArgumentException("empty", nameof(message));
@@ -18,6 +23,7 @@
             this.Severity = severity;
             this.Message = message;
             this.Exception = exception;
+            this.AdditionalData = additionalData;
         }
     }
 }

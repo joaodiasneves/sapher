@@ -1,4 +1,4 @@
-﻿namespace Sapher.Extensions
+﻿namespace Sapher.Configuration.Extensions
 {
     using System;
     using Configuration;

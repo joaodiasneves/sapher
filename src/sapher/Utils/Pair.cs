@@ -1,4 +1,4 @@
-﻿namespace Sapher.Exceptions
+﻿namespace Sapher.Utils
 {
     using System.Collections.Generic;
 

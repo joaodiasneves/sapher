@@ -17,6 +17,7 @@
 
         public SapherStepData()
         {
+            this.PublishedMessageIdsResponseState = new Dictionary<string, ResponseResultState>();
         }
 
         public string StepName { get; set; }

@@ -3,9 +3,9 @@ namespace Sapher.Tests
     using System;
     using System.Linq;
     using System.Threading.Tasks;
-    using Extensions;
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
+    using Configuration.Extensions;
     using TestHandlers;
     using Xunit;
 

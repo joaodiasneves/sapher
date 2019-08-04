@@ -11,5 +11,7 @@
         ISapherConfigurator AddLogger<T>() where T : class, ILogger;
 
         ISapherConfigurator AddPersistence<T>() where T : class, ISapherDataRepository;
+
+        ISapherConfigurator AddRetryPolicy(int maxRetryAttempts = 3, int retryIntervalMs = 3000);
     }
 }

@@ -15,6 +15,8 @@
         private readonly IList<ISapherStep> sapherSteps;
         private bool registeredLogger;
         private bool registeredPersistence;
+        private int maxRetryAttempts;
+        private int retryIntervalMs;
 
         internal SapherConfigurator(IServiceCollection serviceCollection)
         {
@@ -34,7 +36,7 @@
                 this.serviceCollection.AddTransient<ISapherDataRepository, InMemorySapherRepository>();
             }
 
-            return new SapherConfiguration(this.sapherSteps);
+            return new SapherConfiguration(this.sapherSteps, this.maxRetryAttempts, this.retryIntervalMs);
         }
 
         public ISapherConfigurator AddStep<T>(
@@ -49,7 +51,7 @@
                 out var inputMessageType,
                 out var outputMessage))
             {
-                throw new SapherException(outputMessage);
+                throw new SapherException(outputMessage); // TODO Improve exception
             }
 
             var stepConfigurator = new SapherStepConfigurator(
@@ -78,6 +80,14 @@
         {
             this.serviceCollection.AddTransient<ISapherDataRepository, T>();
             this.registeredPersistence = true;
+            return this;
+        }
+
+        public ISapherConfigurator AddRetryPolicy(int maxRetryAttempts = 3, int retryIntervalMs = 3000)
+        {
+            this.maxRetryAttempts = maxRetryAttempts;
+            this.retryIntervalMs = retryIntervalMs;
+
             return this;
         }
     }

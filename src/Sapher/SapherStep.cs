@@ -6,10 +6,13 @@
     using System.Threading.Tasks;
     using Configuration;
     using Dtos;
+    using global::Sapher.Exceptions;
+    using global::Sapher.Logger.Extensions;
+    using global::Sapher.Utils;
     using Handlers;
+    using Logger;
     using Microsoft.Extensions.DependencyInjection;
     using Persistence;
-    using Model = Persistence.Model;
 
     public class SapherStep : ISapherStep
     {
@@ -21,6 +24,7 @@
         private Type inputHandlerType;
         private ISapherDataRepository dataRepository;
         private IServiceProvider serviceProvider;
+        private ILogger logger;
         private IDictionary<Type, Type> responseHandlers = new Dictionary<Type, Type>();
 
         internal SapherStep(ISapherStepConfiguration configuration)
@@ -28,12 +32,13 @@
             this.configuration = configuration;
         }
 
-        public void Init(IServiceProvider serviceProvider)
+        public void Init(IServiceProvider serviceProvider, ILogger logger)
         {
             this.StepName = this.configuration.StepName;
             this.inputMessageType = this.configuration.InputMessageType;
             this.inputHandlerType = this.configuration.InputHandlerType;
             this.serviceProvider = serviceProvider;
+            this.logger = logger;
 
             this.SetupDataRepository();
             this.SetupResponseHandlers();
@@ -41,8 +46,6 @@
 
         public async Task<StepResult> Deliver<T>(T message, MessageSlip messageSlip) where T : class
         {
-            // TODO  add logs.
-            // TODO  trycatches
             var messageType = typeof(T);
 
             var stepHandlesMessageAsInput = messageType == this.inputMessageType;
@@ -58,16 +61,44 @@
 
             if (stepHandlesMessageAsInput)
             {
+                var internalCorrelationId = Guid.NewGuid().ToString();
+
+                this.logger.Verbose(
+                    $"Found Sapher Input Handler for {messageType.Name}",
+                    Pair.Of("StepName", this.StepName),
+                    Pair.Of("InputHandler", this.inputHandlerType.Name),
+                    Pair.Of("InternalCorrelationId", internalCorrelationId));
+
                 stepResult.InputHandlerResult = await this
-                    .HandleInput(message, messageSlip)
+                    .HandleInput(message, messageSlip, internalCorrelationId)
                     .ConfigureAwait(false);
+
+                this.logger.Verbose(
+                    $"Executed Sapher Input Handler for {messageType.Name}",
+                    Pair.Of("StepName", this.StepName),
+                    Pair.Of("InputHandler", this.inputHandlerType.Name),
+                    Pair.Of("InternalCorrelationId", internalCorrelationId));
             }
 
             if (stepHandleMessageAsResponse)
             {
+                var sapherCorrelationId = Guid.NewGuid().ToString();
+
+                this.logger.Verbose(
+                    $"Found Sapher Response Handler for {messageType.Name}",
+                    Pair.Of("StepName", this.StepName),
+                    Pair.Of("ResponseHandler", responseHandlerType.Name),
+                    Pair.Of("SapherCorrelationId", sapherCorrelationId));
+
                 stepResult.ResponseHandlerResult = await this
-                    .HandleResponse(responseHandlerType, message, messageSlip)
+                    .HandleResponse(responseHandlerType, message, messageSlip, sapherCorrelationId)
                     .ConfigureAwait(false);
+
+                this.logger.Verbose(
+                    $"Executed Sapher Response Handler for {messageType.Name}",
+                    Pair.Of("StepName", this.StepName),
+                    Pair.Of("ResponseHandler", responseHandlerType.Name),
+                    Pair.Of("SapherCorrelationId", sapherCorrelationId));
             }
 
             return stepResult;
@@ -75,10 +106,10 @@
 
         private async Task<InputResult> HandleInput<T>(
             T inputMessage,
-            MessageSlip messageSlip)
+            MessageSlip messageSlip,
+            string sapherCorrelationId)
             where T : class
         {
-            // TODO Simplify method?
             // Idempotency
             // TODO ensure versioning
             var data = await this.dataRepository
@@ -87,9 +118,13 @@
 
             if (data != null)
             {
-                // TODO LOG
-                // TODO Throw exception (?)
-                return null;
+                throw new SapherException(
+                    "Input Message received twice. Ignoring",
+                    Pair.Of("MessageType", typeof(T).Name),
+                    Pair.Of("StepName", this.StepName),
+                    Pair.Of("MessageId", messageSlip.MessageId),
+                    Pair.Of("Step State", data.State.ToString()),
+                    Pair.Of("SapherCorrelationId", sapherCorrelationId));
             }
 
             data = new Dtos.SapherStepData(messageSlip, this.StepName);
@@ -98,11 +133,20 @@
                 .GetServices<IHandlesInput<T>>()
                 .FirstOrDefault(h => h.GetType() == this.inputHandlerType);
 
-            // TODO Check if InputHandler == null
+            if(inputHandler == null)
+            {
+                throw new SapherConfigurationException(
+                    "An error has occurred with this Step Configuration. IHandlesInput implementation not found for specified message",
+                    Pair.Of("ExpectedInputHandlerType", this.inputHandlerType.Name),
+                    Pair.Of("MessageType", typeof(T).Name),
+                    Pair.Of("SapherCorrelationId", sapherCorrelationId));
+            }
+
             var result = await inputHandler
                 .Execute(inputMessage, messageSlip)
                 .ConfigureAwait(false);
 
+            result = result ?? new InputResult { State = InputResultState.Failed };
             result.ExecutedHandlerName = this.inputHandlerType.Name;
 
             data.DataToPersist = result.DataToPersist ?? data.DataToPersist;
@@ -125,21 +169,62 @@
         private async Task<ResponseResult> HandleResponse<T>(
             Type responseHandlerType,
             T successMessage,
-            MessageSlip messageSlip)
+            MessageSlip messageSlip,
+            string sapherCorrelationId)
             where T : class
         {
             var responseHandler = this.serviceProvider
                 .GetServices<IHandlesResponse<T>>()
                 .FirstOrDefault(h => h.GetType() == responseHandlerType);
 
-            // TODO check if responsehandler is null
+            if (responseHandler == null)
+            {
+                throw new SapherConfigurationException(
+                    "An error has occurred with this Step Configuration. IHandlesResponse implementation not found for specified message",
+                    Pair.Of("ExpectedResponseHandlerType", responseHandlerType.Name),
+                    Pair.Of("MessageType", typeof(T).Name),
+                    Pair.Of("SapherCorrelationId", sapherCorrelationId));
+            }
 
             var data = await this.dataRepository
                 .LoadFromConversationId(this.StepName, messageSlip.ConversationId)
                 .ConfigureAwait(false);
 
-            if (IsStepWaitingResponses(data) && IsThisMessageNotProcessed(data, messageSlip))
+            if (data != null)
             {
+                if (IsStepFinished(data))
+                {
+                    throw new SapherException(
+                        "This step is no longer waiting for responses. Ignoring",
+                        Pair.Of("MessageType", typeof(T).Name),
+                        Pair.Of("StepName", this.StepName),
+                        Pair.Of("MessageId", messageSlip.MessageId),
+                        Pair.Of("Step State", data.State.ToString()),
+                        Pair.Of("SapherCorrelationId", sapherCorrelationId));
+                }
+
+                if (IsStepNotExpectingResponses(data))
+                {
+                    throw new SapherException(
+                        "This step execution does not expect any response. Ignoring",
+                        Pair.Of("MessageType", typeof(T).Name),
+                        Pair.Of("StepName", this.StepName),
+                        Pair.Of("MessageId", messageSlip.MessageId),
+                        Pair.Of("Step State", data.State.ToString()),
+                        Pair.Of("SapherCorrelationId", sapherCorrelationId));
+                }
+
+                if(IsThisMessageAlreadyProcessed(data, messageSlip))
+                {
+                    throw new SapherException(
+                        "This response message was already processed. Ignoring",
+                        Pair.Of("MessageType", typeof(T).Name),
+                        Pair.Of("StepName", this.StepName),
+                        Pair.Of("MessageId", messageSlip.MessageId),
+                        Pair.Of("Step State", data.State.ToString()),
+                        Pair.Of("SapherCorrelationId", sapherCorrelationId));
+                }
+                
                 var result = await responseHandler
                     .Execute(successMessage, messageSlip, data.DataToPersist)
                     .ConfigureAwait(false);
@@ -148,18 +233,18 @@
                 UpdateDataAfterResponseExecution(data, result, messageSlip);
                 return result;
             }
-            else
-            {
-                // TODO - Log.
-                return null;
-            }
+
+            return null;
         }
 
-        private bool IsStepWaitingResponses(Dtos.SapherStepData data)
-            => data?.State == Dtos.StepState.None || data?.State == Dtos.StepState.ExecutedInput;
+        private bool IsStepFinished(Dtos.SapherStepData data)
+            => data.State != Dtos.StepState.None && data.State != Dtos.StepState.ExecutedInput;
 
-        private bool IsThisMessageNotProcessed(Dtos.SapherStepData data, MessageSlip messageSlip)
-            => data.PublishedMessageIdsResponseState[messageSlip.ConversationId] == Dtos.ResponseResultState.None;
+        private bool IsStepNotExpectingResponses(Dtos.SapherStepData data)
+            => data.PublishedMessageIdsResponseState == null;
+
+        private bool IsThisMessageAlreadyProcessed(Dtos.SapherStepData data, MessageSlip messageSlip)
+            => data.PublishedMessageIdsResponseState[messageSlip.ConversationId] != Dtos.ResponseResultState.None;
 
         private void UpdateDataAfterResponseExecution(
             Dtos.SapherStepData data,
