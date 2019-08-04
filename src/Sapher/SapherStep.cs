@@ -111,7 +111,6 @@
             where T : class
         {
             // Idempotency
-            // TODO ensure versioning
             var data = await this.dataRepository
                 .Load(this.StepName, messageSlip.MessageId)
                 .ConfigureAwait(false);

@@ -8,6 +8,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Persistence;
     using Persistence.Repositories;
+    using Utils;
 
     public class SapherConfigurator : ISapherConfigurator
     {
@@ -51,7 +52,10 @@
                 out var inputMessageType,
                 out var outputMessage))
             {
-                throw new SapherException(outputMessage); // TODO Improve exception
+                throw new SapherConfigurationException(
+                    outputMessage,
+                    Pair.Of("StepName", name),
+                    Pair.Of("InputHandler", inputHandlerType.Name));
             }
 
             var stepConfigurator = new SapherStepConfigurator(

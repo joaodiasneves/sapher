@@ -54,9 +54,7 @@
 
             if (implementationHandlerType.IsGenericType)
             {
-                outputMessage = 
-                    $"{implementationHandlerType.Name} can not " +
-                    $"be a Generic definition";
+                outputMessage = $"{implementationHandlerType.Name} can not be a Generic definition";
                 return false;
             }
 

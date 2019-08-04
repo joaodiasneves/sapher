@@ -125,7 +125,7 @@
             }
             else
             {
-                throw new SapherException("Trying to Use Sapher without defining any step"); // TODO - Improve exceptions
+                throw new SapherConfigurationException("Trying to Use Sapher without defining any step");
             }
         }
     }

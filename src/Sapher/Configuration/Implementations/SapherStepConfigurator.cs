@@ -9,19 +9,19 @@
 
     public class SapherStepConfigurator : ISapherStepConfigurator
     {
-        private readonly string name;
+        private readonly string stepName;
         private readonly IServiceCollection serviceCollection;
         private readonly Type inputMessageType;
         private readonly Type inputHandlerType;
         private readonly IDictionary<Type, Type> responseHandlers;
 
         internal SapherStepConfigurator(
-            string name,
+            string stepName,
             Type inputMessageType,
             Type inputHandlerType,
             IServiceCollection serviceCollection)
         {
-            this.name = name;
+            this.stepName = stepName;
             this.inputMessageType = inputMessageType;
             this.inputHandlerType = inputHandlerType;
             this.serviceCollection = serviceCollection;
@@ -32,7 +32,7 @@
         internal ISapherStepConfiguration Configure()
         {
             return new SapherStepConfiguration(
-                this.name,
+                this.stepName,
                 this.inputMessageType,
                 this.inputHandlerType,
                 this.serviceCollection,
@@ -54,16 +54,19 @@
                 out var responseMessageTypes,
                 out var outputMessage))
             {
-                throw new SapherException(outputMessage); // TODO IMprove exceptions
+                throw new SapherConfigurationException(
+                    outputMessage,
+                    Pair.Of("StepName", this.stepName),
+                    Pair.Of("ResponseHandler", responseHandlerType.Name));
             }
 
             foreach (var responseMessageType in responseMessageTypes)
             {
-                if (responseMessageType == inputMessageType)
+                if (responseMessageType == this.inputMessageType)
                 {
                     throw new SapherException(
                         "Using the same Message as Input and Response in the same Step is not allowed.",
-                        Pair.Of("StepName", this.name),
+                        Pair.Of("StepName", this.stepName),
                         Pair.Of("MessageType", responseMessageType.Name),
                         Pair.Of("InputHandler", this.inputHandlerType.Name),
                         Pair.Of("ResponseHandler", responseHandlerType.Name));
