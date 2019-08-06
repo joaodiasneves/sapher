@@ -3,6 +3,8 @@
 * Supports .NET Core
 * Requires Usage of ServiceCollection.
 
+[![NuGet version](https://badge.fury.io/nu/Sapher.svg)](https://badge.fury.io/nu/Sapher)
+
 ## Provided features
 * Idempotency
 * Retry policy
