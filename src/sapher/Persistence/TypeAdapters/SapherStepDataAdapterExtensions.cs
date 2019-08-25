@@ -1,7 +1,7 @@
 ﻿namespace Sapher.Persistence.TypeAdapters
 {
-    using System.Collections.Generic;
     using System.Linq;
+
     using Model = Persistence.Model;
 
     public static class SapherStepDataAdapterExtensions
@@ -15,7 +15,9 @@
                 InputMessageSlip = data.InputMessageSlip.ToDataModel(),
                 PublishedMessageIdsResponseState = data
                     .PublishedMessageIdsResponseState
-                    .ToDictionary(k => k.Key, v => v.Value.ToDataModel())
+                    .ToDictionary(k => k.Key, v => v.Value.ToDataModel()),
+                CreationDate = data.CreationDate,
+                UpdatedOn = data.UpdatedOn
             };
 
         public static Dtos.SapherStepData ToDto(this Model.SapherStepData data)
@@ -27,7 +29,9 @@
                 InputMessageSlip = data.InputMessageSlip.ToDto(),
                 PublishedMessageIdsResponseState = data
                     .PublishedMessageIdsResponseState
-                    .ToDictionary(k => k.Key, v => v.Value.ToDto())
+                    .ToDictionary(k => k.Key, v => v.Value.ToDto()),
+                CreationDate = data.CreationDate,
+                UpdatedOn = data.UpdatedOn
             };
     }
 }

@@ -252,6 +252,7 @@
         {
             data.DataToPersist = result.DataToPersist ?? data.DataToPersist;
             data.PublishedMessageIdsResponseState[messageSlip.ConversationId] = result.State;
+            data.UpdatedOn = DateTime.UtcNow;
 
             EvaluateStepState(data);
             this.dataRepository.Save(data);

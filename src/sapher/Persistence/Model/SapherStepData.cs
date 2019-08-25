@@ -1,5 +1,6 @@
 ﻿namespace Sapher.Persistence.Model
 {
+    using System;
     using System.Collections.Generic;
 
     public class SapherStepData
@@ -15,6 +16,10 @@
         public IDictionary<string, ResponseResultState> PublishedMessageIdsResponseState { get; set; }
 
         public IDictionary<string, string> DataToPersist { get; set; }
+
+        public DateTime CreationDate { get; set; }
+
+        public DateTime UpdatedOn { get; set; }
 
         public SapherStepData()
         {
