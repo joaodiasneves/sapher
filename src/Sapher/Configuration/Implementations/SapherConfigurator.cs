@@ -18,6 +18,7 @@
         private bool registeredPersistence;
         private int maxRetryAttempts;
         private int retryIntervalMs;
+        private int timeoutInMinutes;
 
         internal SapherConfigurator(IServiceCollection serviceCollection)
         {
@@ -37,7 +38,7 @@
                 this.serviceCollection.AddTransient<ISapherDataRepository, InMemorySapherRepository>();
             }
 
-            return new SapherConfiguration(this.sapherSteps, this.maxRetryAttempts, this.retryIntervalMs);
+            return new SapherConfiguration(this.sapherSteps, this.maxRetryAttempts, this.retryIntervalMs, this.timeoutInMinutes);
         }
 
         public ISapherConfigurator AddStep<T>(
@@ -91,6 +92,14 @@
         {
             this.maxRetryAttempts = maxRetryAttempts;
             this.retryIntervalMs = retryIntervalMs;
+
+            return this;
+        }
+
+        public ISapherConfigurator AddTimeoutPolicy(int timeoutInMinutes = 30)
+        {
+            this.timeoutInMinutes = timeoutInMinutes;
+            this.serviceCollection.AddHostedService<TimeoutHostedService>();
 
             return this;
         }

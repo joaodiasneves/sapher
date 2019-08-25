@@ -35,6 +35,15 @@
             this.Init();
         }
 
+        internal bool IsFinished
+            => this.State != Dtos.StepState.None && this.State != Dtos.StepState.ExecutedInput;
+
+        internal bool IsExpectingResponses
+            => this.PublishedMessageIdsResponseState?.Count > 0;
+
+        internal bool IsMessageAlreadyProcessed(MessageSlip messageSlip)
+            => this.PublishedMessageIdsResponseState[messageSlip.ConversationId] != Dtos.ResponseResultState.None;
+
         private void Init()
         {
             this.PublishedMessageIdsResponseState = new Dictionary<string, ResponseResultState>();

@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using global::Sapher.Dtos;
     using TypeAdapters;
 
     public class InMemorySapherRepository : ISapherDataRepository
@@ -19,9 +20,6 @@
                         StringComparison.InvariantCultureIgnoreCase))
                 ?.ToDto());
 
-        public Task<Dtos.SapherStepData> Load(string id)
-            => Task.FromResult(this.LoadFromId(id)?.ToDto());
-
         public Task<Dtos.SapherStepData> LoadFromConversationId(string stepName, string outputMessageId)
             => Task.FromResult(this.stepData
                 .Find(sd =>
@@ -36,7 +34,22 @@
                         StringComparison.InvariantCultureIgnoreCase)))
                 ?.ToDto());
 
-        public async Task<bool> Save(Dtos.SapherStepData data)
+        public Task UpdateInstancesState(Func<SapherStepData, bool> selector, StepState stepState)
+        {
+            var identifiedInstances = this.stepData
+                    .Select(model => model.ToDto())
+                    .Where(dto => selector(dto));
+
+            foreach (var instance in identifiedInstances)
+            {
+                instance.State = stepState;
+                this.Save(instance);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> Save(Dtos.SapherStepData data)
         {
             var model = data.ToDataModel();
 
@@ -47,7 +60,7 @@
             }
 
             this.stepData.Add(model);
-            return true;
+            return Task.FromResult(true);
         }
 
         private Model.SapherStepData LoadFromId(string id)

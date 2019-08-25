@@ -1,5 +1,6 @@
 ﻿namespace Sapher.Persistence
 {
+    using System;
     using System.Threading.Tasks;
     using Dtos;
 
@@ -7,9 +8,9 @@
     {
         Task<SapherStepData> Load(string stepName, string inputMessageId);
 
-        Task<SapherStepData> Load(string id);
-
         Task<SapherStepData> LoadFromConversationId(string stepName, string outputMessageId);
+
+        Task UpdateInstancesState(Func<SapherStepData, bool> selector, StepState stepState);
 
         Task<bool> Save(SapherStepData data);
     }

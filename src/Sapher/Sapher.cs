@@ -7,13 +7,15 @@
     using Configuration;
     using Dtos;
     using Exceptions;
-    using global::Sapher.Logger.Extensions;
     using Logger;
+    using Logger.Extensions;
     using Microsoft.Extensions.DependencyInjection;
     using Polly;
 
-    public class Sapher : ISapher
+    public class Sapher : ISapher, IInternalSapher
     {
+        public int TimeoutInMinutes { get; private set; }
+
         private readonly ISapherConfiguration configuration;
         private ILogger logger;
         private IEnumerable<ISapherStep> steps = new List<ISapherStep>();
@@ -30,6 +32,7 @@
             this.logger = serviceProvider.GetRequiredService<ILogger>();
             SetupSteps(serviceProvider);
             SetupRetryPolicy();
+            SetupTimeoutPolicy();
         }
 
         public async Task<DeliveryResult> DeliverMessage<T>(
@@ -110,6 +113,11 @@
         {
             this.maxRetryAttempts = this.configuration.MaxRetryAttempts;
             this.retryIntervalMs = this.configuration.RetryIntervalMs;
+        }
+
+        internal void SetupTimeoutPolicy()
+        {
+            this.TimeoutInMinutes = this.configuration.TimeoutInMinutes;
         }
 
         internal void SetupSteps(IServiceProvider serviceProvider)

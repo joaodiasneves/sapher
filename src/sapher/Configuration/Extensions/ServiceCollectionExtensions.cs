@@ -24,6 +24,7 @@
 
             var sapher = new Sapher(sapherConfiguration);
             serviceCollection.AddSingleton<ISapher>(sapher);
+            serviceCollection.AddSingleton<IInternalSapher>(sapher);
 
             return serviceCollection;
         }

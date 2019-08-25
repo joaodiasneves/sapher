@@ -16,7 +16,6 @@
 
     public class SapherStep : ISapherStep
     {
-        // TODO - Provide a Job executing in the background to check for Steps that never received all the answers
         public string StepName { get; set; }
 
         private readonly ISapherStepConfiguration configuration;
@@ -191,7 +190,7 @@
 
             if (data != null)
             {
-                if (IsStepFinished(data))
+                if (data.IsFinished)
                 {
                     throw new SapherException(
                         "This step is no longer waiting for responses. Ignoring",
@@ -202,7 +201,7 @@
                         Pair.Of("SapherCorrelationId", sapherCorrelationId));
                 }
 
-                if (IsStepNotExpectingResponses(data))
+                if (!data.IsExpectingResponses)
                 {
                     throw new SapherException(
                         "This step execution does not expect any response. Ignoring",
@@ -213,7 +212,7 @@
                         Pair.Of("SapherCorrelationId", sapherCorrelationId));
                 }
 
-                if (IsThisMessageAlreadyProcessed(data, messageSlip))
+                if (data.IsMessageAlreadyProcessed(messageSlip))
                 {
                     throw new SapherException(
                         "This response message was already processed. Ignoring",
@@ -235,15 +234,6 @@
 
             return null;
         }
-
-        private bool IsStepFinished(Dtos.SapherStepData data)
-            => data.State != Dtos.StepState.None && data.State != Dtos.StepState.ExecutedInput;
-
-        private bool IsStepNotExpectingResponses(Dtos.SapherStepData data)
-            => data.PublishedMessageIdsResponseState == null;
-
-        private bool IsThisMessageAlreadyProcessed(Dtos.SapherStepData data, MessageSlip messageSlip)
-            => data.PublishedMessageIdsResponseState[messageSlip.ConversationId] != Dtos.ResponseResultState.None;
 
         private void UpdateDataAfterResponseExecution(
             Dtos.SapherStepData data,
@@ -283,8 +273,6 @@
                     data.State = Dtos.StepState.Compensated;
                 }
             }
-
-            // TODO Develop Background job that checks if the Step never had all the expected answers
         }
 
         internal void SetupResponseHandlers()

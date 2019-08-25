@@ -7,6 +7,7 @@
         Successful = 2,
         Compensated = 3,
         FailedOnExecution = 4,
-        FailedOnResponses = 5
+        FailedOnResponses = 5,
+        Timeout = 6
     }
 }

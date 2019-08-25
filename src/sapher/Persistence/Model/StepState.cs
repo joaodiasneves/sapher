@@ -7,7 +7,7 @@
         Successful = 2,
         Compensated = 3,
         FailedOnExecution = 4,
-        FailedOnResponses = 5
-        // TransactionCompleted = 5 TODO - Think about this later
+        FailedOnResponses = 5,
+        Timeout = 6
     }
 }

@@ -26,6 +26,9 @@
                 case Dtos.StepState.FailedOnResponses:
                     return Model.StepState.FailedOnResponses;
 
+                case Dtos.StepState.Timeout:
+                    return Model.StepState.Timeout;
+
                 default:
                     return Model.StepState.None;
             }
@@ -52,6 +55,9 @@
 
                 case Model.StepState.FailedOnResponses:
                     return Dtos.StepState.FailedOnResponses;
+
+                case Model.StepState.Timeout:
+                    return Dtos.StepState.Timeout;
 
                 default:
                     return Dtos.StepState.None;

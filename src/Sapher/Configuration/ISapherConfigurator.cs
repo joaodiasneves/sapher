@@ -13,5 +13,7 @@
         ISapherConfigurator AddPersistence<T>() where T : class, ISapherDataRepository;
 
         ISapherConfigurator AddRetryPolicy(int maxRetryAttempts = 3, int retryIntervalMs = 3000);
+
+        ISapherConfigurator AddTimeoutPolicy(int timeoutInMinutes = 30);
     }
 }

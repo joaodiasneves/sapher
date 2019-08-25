@@ -9,5 +9,7 @@
         int MaxRetryAttempts { get; }
 
         int RetryIntervalMs { get; }
+
+        int TimeoutInMinutes { get; }
     }
 }
