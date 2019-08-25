@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Sapher.Dtos
+﻿namespace Sapher.Dtos
 {
     public class StepResult
     {

@@ -132,7 +132,7 @@
                 .GetServices<IHandlesInput<T>>()
                 .FirstOrDefault(h => h.GetType() == this.inputHandlerType);
 
-            if(inputHandler == null)
+            if (inputHandler == null)
             {
                 throw new SapherConfigurationException(
                     "An error has occurred with this Step Configuration. IHandlesInput implementation not found for specified message",
@@ -213,7 +213,7 @@
                         Pair.Of("SapherCorrelationId", sapherCorrelationId));
                 }
 
-                if(IsThisMessageAlreadyProcessed(data, messageSlip))
+                if (IsThisMessageAlreadyProcessed(data, messageSlip))
                 {
                     throw new SapherException(
                         "This response message was already processed. Ignoring",
@@ -223,7 +223,7 @@
                         Pair.Of("Step State", data.State.ToString()),
                         Pair.Of("SapherCorrelationId", sapherCorrelationId));
                 }
-                
+
                 var result = await responseHandler
                     .Execute(successMessage, messageSlip, data.DataToPersist)
                     .ConfigureAwait(false);

@@ -46,7 +46,7 @@
                 State = InputResultState.Successful
             });
         }
-        
+
         public Task<ResponseResult> Execute(
             TestSuccessMessage message,
             MessageSlip messageSlip,
@@ -82,7 +82,7 @@
         public Task<ResponseResult> Execute(
             TestFailureMessage message,
             MessageSlip messageSlip,
-            IDictionary<string,string> previouslyPersistedData)
+            IDictionary<string, string> previouslyPersistedData)
         {
             Console.WriteLine("Executing TestFailureMessage");
             var result = new ResponseResult

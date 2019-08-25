@@ -3,9 +3,9 @@
     using System;
     using System.Collections.Generic;
     using Exceptions;
-    using Utils;
     using Handlers;
     using Microsoft.Extensions.DependencyInjection;
+    using Utils;
 
     public class SapherStepConfigurator : ISapherStepConfigurator
     {

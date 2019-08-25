@@ -3,9 +3,9 @@ namespace Sapher.Tests
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Configuration.Extensions;
     using FluentAssertions;
     using Microsoft.Extensions.DependencyInjection;
-    using Configuration.Extensions;
     using TestHandlers;
     using Xunit;
 
@@ -86,7 +86,7 @@ namespace Sapher.Tests
                     new TestSuccessMessage(),
                     Dtos.MessageSlip.GenerateNewMessageSlip())
                 .ConfigureAwait(false);
-            
+
             // Assert
             Assert.NotNull(deliveryResult);
             Assert.NotNull(deliveryResult.StepsExecuted);

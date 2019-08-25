@@ -6,6 +6,6 @@
     {
         internal string ExecutedHandlerName { get; set; }
 
-        public IDictionary<string,string> DataToPersist { get; set; }
+        public IDictionary<string, string> DataToPersist { get; set; }
     }
 }

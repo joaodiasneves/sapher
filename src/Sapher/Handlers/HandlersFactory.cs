@@ -3,7 +3,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
     using Microsoft.Extensions.DependencyInjection;
 
     public static class HandlersFactory
@@ -88,7 +87,7 @@
                 messageTypes.Add(implementedInterface.GenericTypeArguments[0]);
                 serviceCollection.AddTransient(implementedInterface, implementationHandlerType);
             }
-            
+
             return true;
         }
     }
