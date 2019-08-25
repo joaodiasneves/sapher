@@ -1,4 +1,4 @@
-﻿namespace Sapher.Logger
+﻿    namespace Sapher.Logger
 {
     using System;
     using System.Collections.Generic;

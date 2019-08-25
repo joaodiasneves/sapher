@@ -5,7 +5,7 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using Sapher.Extensions;
+    using Sapher.Configuration.Extensions;
 
     public static class Program
     {
@@ -18,7 +18,9 @@
                         .AddSapher(sapherConfig => sapherConfig
                             .AddStep<TestHandleInput>("StepName", stepConfig => stepConfig
                                 .AddResponseHandler<TestHandleSuccess>()
-                                .AddResponseHandler<TestHandleCompensation>()))
+                                .AddResponseHandler<TestHandleCompensation>())
+                            .AddLogger<>()
+                            .AddPersistence<>())
                         .AddHostedService<TestService>())
                  .UseConsoleLifetime();
 
