@@ -3,10 +3,16 @@
 * Supports .NET Core
 * Requires Usage of ServiceCollection.
 
+[![NuGet version](https://badge.fury.io/nu/Sapher.svg)](https://badge.fury.io/nu/Sapher)
+
 ## Provided features
 * Idempotency
 * Retry policy
 * Distributed transaction management using a choreographic approach
+
+## Installing via [NuGet](https://www.nuget.org/packages/sapher)
+
+    Install-Package Sapher
 
 ## Extensibility
 * Persistence engine can be extended by implementing ISapherDataRepository and providing the implementation with AddPersistence.
