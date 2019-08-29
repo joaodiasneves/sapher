@@ -12,7 +12,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Polly;
 
-    public class Sapher : ISapher, IInternalSapher
+    public class Sapher : IInternalSapher
     {
         public int TimeoutInMinutes { get; private set; }
 

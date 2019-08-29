@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using Microsoft.Extensions.DependencyInjection;
 
-    public class SapherStepConfiguration : ISapherStepConfiguration
+    internal class SapherStepConfiguration : ISapherStepConfiguration
     {
         public string StepName { get; }
 

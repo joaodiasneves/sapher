@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public interface ISapherConfiguration
+    internal interface ISapherConfiguration
     {
         IList<ISapherStep> SapherSteps { get; }
 

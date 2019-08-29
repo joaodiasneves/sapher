@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using Microsoft.Extensions.DependencyInjection;
 
-    public interface ISapherStepConfiguration
+    internal interface ISapherStepConfiguration
     {
         string StepName { get; }
 

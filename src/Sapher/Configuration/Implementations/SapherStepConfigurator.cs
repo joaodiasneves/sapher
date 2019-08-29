@@ -7,7 +7,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Utils;
 
-    public class SapherStepConfigurator : ISapherStepConfigurator
+    internal class SapherStepConfigurator : ISapherStepConfigurator
     {
         private readonly string stepName;
         private readonly IServiceCollection serviceCollection;
