@@ -5,7 +5,6 @@
     /// </summary>
     public interface ISapherStepConfigurator
     {
-
         /// <summary>
         /// Method to add a ResponseHandler to a SapherStep configuration.
         /// </summary>

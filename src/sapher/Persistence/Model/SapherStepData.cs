@@ -13,13 +13,13 @@
 
         internal StepState State { get; set; }
 
-        public IList<string> MessagesWaitingResponse { get; set; }
+        internal IList<string> MessagesWaitingResponse { get; set; }
 
-        public IList<string> SuccessfulMessages { get; set; }
+        internal IList<string> SuccessfulMessages { get; set; }
 
-        public IList<string> FailedMessages { get; set; }
+        internal IList<string> FailedMessages { get; set; }
 
-        public IList<string> CompensatedMessages { get; set; }
+        internal IList<string> CompensatedMessages { get; set; }
 
         internal IDictionary<string, string> DataToPersist { get; set; }
 

@@ -5,8 +5,15 @@
     using Configuration.Implementations;
     using Microsoft.Extensions.DependencyInjection;
 
+    /// <summary>
+    /// Provides <c>Microsoft.Extensions.DependencyInjection</c> extensions to use Sapher
+    /// </summary>
     public static class ServiceCollectionExtensions
     {
+        /// <summary>
+        /// Initializes Sapher as previously configured
+        /// </summary>
+        /// <returns>Sapher instance</returns>
         public static ISapher UseSapher(this IServiceProvider serviceProvider)
         {
             var sapher = serviceProvider.GetRequiredService<IInternalSapher>();
@@ -14,6 +21,10 @@
             return sapher;
         }
 
+        /// <summary>
+        /// Adds Sapher to <see cref="IServiceCollection"/> using the defined configurations
+        /// </summary>
+        /// <returns>ServiceCollection for fluent use</returns>
         public static IServiceCollection AddSapher(
             this IServiceCollection serviceCollection,
             Action<ISapherConfigurator> configure)

@@ -32,7 +32,7 @@
             logger.Verbose("Timeout Background Service is starting.");
 
             timer = new Timer(
-                async s => await TimeoutStepInstances().ConfigureAwait(false),
+                async _ => await TimeoutStepInstances().ConfigureAwait(false),
                 null,
                 TimeSpan.FromMinutes(5), // TODO - Make this configurable
                 TimeSpan.FromMinutes(30));

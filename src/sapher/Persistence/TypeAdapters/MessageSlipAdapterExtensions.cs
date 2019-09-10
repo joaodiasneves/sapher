@@ -5,19 +5,9 @@
     internal static class MessageSlipAdapterExtensions
     {
         internal static Model.MessageSlip ToDataModel(this Dtos.MessageSlip messageSlip)
-            => new Model.MessageSlip
-            {
-                MessageId = messageSlip.MessageId,
-                ConversationId = messageSlip.ConversationId,
-                CorrelationId = messageSlip.CorrelationId
-            };
+            => new Model.MessageSlip(messageSlip.MessageId, messageSlip.ConversationId, messageSlip.CorrelationId);
 
         internal static Dtos.MessageSlip ToDto(this Model.MessageSlip messageSlip)
-            => new Dtos.MessageSlip
-            {
-                MessageId = messageSlip.MessageId,
-                ConversationId = messageSlip.ConversationId,
-                CorrelationId = messageSlip.CorrelationId
-            };
+            => new Dtos.MessageSlip(messageSlip.MessageId, messageSlip.ConversationId, messageSlip.CorrelationId);
     }
 }

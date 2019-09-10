@@ -4,7 +4,7 @@
     using Dtos;
 
     /// <summary>
-    /// Base class for Sapher execution
+    /// Base interface for Sapher execution
     /// </summary>
     public interface ISapher
     {

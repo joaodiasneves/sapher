@@ -14,7 +14,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Persistence;
 
-    public class SapherStep : ISapherStep
+    internal class SapherStep : ISapherStep
     {
         public string StepName { get; set; }
 
@@ -148,11 +148,11 @@
             result.ExecutedHandlerName = this.inputHandlerType.Name;
 
             data.DataToPersist = result.DataToPersist ?? data.DataToPersist;
-            data.MessagesWaitingResponse = result.OutputMessagesIds.ToList();
+            data.MessagesWaitingResponse = result.SentMessageIds.ToList();
 
             if (result.State == Dtos.InputResultState.Successful)
             {
-                data.State = result.OutputMessagesIds.Any()
+                data.State = result.SentMessageIds.Any()
                     ? Dtos.StepState.ExecutedInput
                     : Dtos.StepState.Successful;
             }

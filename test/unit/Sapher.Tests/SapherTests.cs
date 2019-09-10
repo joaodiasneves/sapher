@@ -1,6 +1,7 @@
 namespace Sapher.Tests
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Threading.Tasks;
     using Configuration.Extensions;
@@ -9,6 +10,7 @@ namespace Sapher.Tests
     using TestHandlers;
     using Xunit;
 
+    [ExcludeFromCodeCoverage]
     public class SapherTests
     {
         private readonly ServiceCollection serviceCollection;
@@ -46,7 +48,7 @@ namespace Sapher.Tests
             // Arrange
             const int expectedDataPersisted = 50;
             const int expectedStepsCount = 2;
-            var expectedOutputId = "ccbba632-3c3a-40c0-8d6f-47c7d039c410";
+            const string expectedOutputId = "ccbba632-3c3a-40c0-8d6f-47c7d039c410";
 
             // Act
             var deliveryResult = await this.sapher
@@ -70,8 +72,8 @@ namespace Sapher.Tests
                 Assert.Null(stepExecuted.ResponseHandlerResult);
 
                 Assert.Equal(expectedDataPersisted, int.Parse(stepExecuted.InputHandlerResult.DataToPersist["AnswerToEverything"]));
-                Assert.Single(stepExecuted.InputHandlerResult.OutputMessagesIds);
-                var outputId = stepExecuted.InputHandlerResult.OutputMessagesIds.Single();
+                Assert.Single(stepExecuted.InputHandlerResult.SentMessageIds);
+                var outputId = stepExecuted.InputHandlerResult.SentMessageIds.Single();
                 Assert.Equal(expectedOutputId, outputId);
                 Assert.Equal(Dtos.InputResultState.Successful, stepExecuted.InputHandlerResult.State);
             }
@@ -104,7 +106,7 @@ namespace Sapher.Tests
         {
             // Arrange
             const int expectedDataPersisted = 50;
-            var expectedOutputId = "ccbba632-3c3a-40c0-8d6f-47c7d039c410";
+            const string expectedOutputId = "ccbba632-3c3a-40c0-8d6f-47c7d039c410";
             var inputMessageSlip = Dtos.MessageSlip.GenerateNewMessageSlip();
 
             await this.sapher
@@ -117,12 +119,10 @@ namespace Sapher.Tests
                     inputMessageSlip)
                 .ConfigureAwait(false);
 
-            var responseMessageSlip = new Dtos.MessageSlip
-            {
-                MessageId = Guid.NewGuid().ToString(),
-                ConversationId = expectedOutputId,
-                CorrelationId = inputMessageSlip.CorrelationId
-            };
+            var responseMessageSlip = new Dtos.MessageSlip(
+                Guid.NewGuid().ToString(),
+                expectedOutputId,
+                inputMessageSlip.CorrelationId);
 
             // Act
             var deliveryResult = await this.sapher

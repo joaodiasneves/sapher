@@ -8,7 +8,6 @@
     /// </summary>
     public class DeliveryResult
     {
-
         /// <summary>
         /// True if the delivery fails. In that case, ErrorMessage and Exception may provide more information regarding the cause.
         /// </summary>
@@ -19,7 +18,6 @@
         /// </summary>
         public string ErrorMessage { get; set; }
 
-        
         /// <summary>
         /// An exception object providing more information regarding the delivery failure.
         /// </summary>
@@ -29,7 +27,6 @@
         /// Identified SapherSteps' execution results.
         /// </summary>
         public IEnumerable<StepResult> StepsExecuted { get; set; }
-
 
         /// <summary>
         /// DeliveryResult class constructor

@@ -1,7 +1,7 @@
 ﻿namespace Sapher.Dtos
 {
     /// <summary>
-    /// Possible Input Message Execution's result states
+    /// Possible Input Message Handler Execution's result states
     /// </summary>
     public enum InputResultState
     {
@@ -11,12 +11,12 @@
         None = 0,
 
         /// <summary>
-        /// Defines a successful input execution
+        /// Defines a successful input handler execution
         /// </summary>
         Successful = 1,
 
         /// <summary>
-        /// Defines a failed input execution
+        /// Defines a failed input handler execution
         /// </summary>
         Failed = 2
     }

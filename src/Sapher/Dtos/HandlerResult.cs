@@ -7,7 +7,6 @@
     /// </summary>
     public class HandlerResult
     {
-
         /// <summary>
         /// Name of the Executed Handler
         /// </summary>

@@ -2,10 +2,12 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Dtos;
     using Handlers;
 
+    [ExcludeFromCodeCoverage]
     public class TestInputMessage
     {
         public int Value { get; set; }
@@ -13,20 +15,25 @@
         public string SimulatedOutputMessageId { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public class TestSuccessMessage
     {
         public int TestValue { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public class TestCompensationMessage { }
 
+    [ExcludeFromCodeCoverage]
     public class TestFailureMessage { }
 
+    [ExcludeFromCodeCoverage]
     public class TestDataObject
     {
         public int AnswerToEverything { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public class TestHandler :
         IHandlesInput<TestInputMessage>,
         IHandlesResponse<TestSuccessMessage>,
@@ -38,7 +45,7 @@
             Console.WriteLine("Executing TestInputMessage");
             return Task.FromResult(new InputResult
             {
-                OutputMessagesIds = new List<string> { message.SimulatedOutputMessageId },
+                SentMessageIds = new List<string> { message.SimulatedOutputMessageId },
                 DataToPersist = new Dictionary<string, string>
                 {
                     { "AnswerToEverything", message.Value.ToString() }

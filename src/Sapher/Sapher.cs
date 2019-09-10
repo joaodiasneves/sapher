@@ -12,8 +12,14 @@
     using Microsoft.Extensions.DependencyInjection;
     using Polly;
 
+    /// <summary>
+    /// Base class for Sapher execution
+    /// </summary>
     public class Sapher : IInternalSapher
     {
+        /// <summary>
+        /// Time in minutes to wait before timing out SapherStep instance execution
+        /// </summary>
         public int TimeoutInMinutes { get; private set; }
 
         private readonly ISapherConfiguration configuration;
@@ -27,6 +33,10 @@
             this.configuration = configuration;
         }
 
+        /// <summary>
+        /// Initializes Sapher class
+        /// </summary>
+        /// <param name="serviceProvider">Uses <c>IServiceProvider</c> for dependency injection</param>
         public void Init(IServiceProvider serviceProvider)
         {
             this.logger = serviceProvider.GetRequiredService<ILogger>();
@@ -35,6 +45,15 @@
             SetupTimeoutPolicy();
         }
 
+        /// <summary>
+        /// Delivers a message across the configured SapherSteps.
+        /// Scans all the Input and Response handlers and delivers the message to the respective message handlers.
+        /// </summary>
+        /// <typeparam name="T">Type of the Message to be delivered</typeparam>
+        /// <param name="message">Message to be delivered</param>
+        /// <param name="messageSlip">MessageSlip fo the message to be delivered and its correspondent identifiers</param>
+        /// <param name="stepName">To deliver the message to a specific step, the wanted StepName should be provided</param>
+        /// <returns>The result of the Delivery. Containing all the executed steps and their respective results.</returns>
         public async Task<DeliveryResult> DeliverMessage<T>(
             T message,
             MessageSlip messageSlip,

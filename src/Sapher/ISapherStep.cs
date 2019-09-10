@@ -5,7 +5,7 @@
     using Dtos;
     using Logger;
 
-    public interface ISapherStep
+    internal interface ISapherStep
     {
         string StepName { get; set; }
 
