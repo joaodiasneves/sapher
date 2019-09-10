@@ -1,6 +1,7 @@
 ﻿namespace Sapher
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Dtos;
@@ -31,9 +32,9 @@
             logger.Verbose("Timeout Background Service is starting.");
 
             timer = new Timer(
-                DoWork,
+                async s => await TimeoutStepInstances().ConfigureAwait(false),
                 null,
-                TimeSpan.FromMinutes(5),
+                TimeSpan.FromMinutes(5), // TODO - Make this configurable
                 TimeSpan.FromMinutes(30));
 
             logger.Verbose("Timeout Background Service started.");
@@ -41,16 +42,20 @@
             return Task.CompletedTask;
         }
 
-        private void DoWork(object state)
+        private async Task TimeoutStepInstances()
         {
             logger.Verbose("Timeout Background Service is running.");
+            var instancesToTimeout = await this.repository.GetStepInstancesWaitingLonger(this.sapher.TimeoutInMinutes);
 
-            bool selector(SapherStepData instance)
-                => !instance.IsFinished
-                && instance.IsExpectingResponses
-                && (DateTime.UtcNow - instance.UpdatedOn).TotalMinutes > this.sapher.TimeoutInMinutes;
+            var tasks = new List<Task>();
 
-            this.repository.UpdateInstancesState(selector, Dtos.StepState.Timeout);
+            foreach (var instance in instancesToTimeout)
+            {
+                instance.State = StepState.Timeout;
+                tasks.Add(this.repository.Save(instance));
+            }
+
+            await Task.WhenAll(tasks);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

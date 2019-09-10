@@ -1,16 +1,19 @@
 ﻿namespace Sapher.Persistence
 {
-    using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Dtos;
 
+    /// <summary>
+    /// Repository to persist Sapher information regarding the state of the Distributed Transactions Steps executions.
+    /// </summary>
     public interface ISapherDataRepository
     {
-        Task<SapherStepData> Load(string stepName, string inputMessageId);
+        Task<Dtos.SapherStepData> GetStepInstanceFromInputMessageId(string stepName, string inputMessageId);
 
-        Task<SapherStepData> LoadFromConversationId(string stepName, string outputMessageId);
+        Task<Dtos.SapherStepData> GetStepInstanceFromOutputMessageId(string stepName, string outputMessageId);
 
-        Task UpdateInstancesState(Func<SapherStepData, bool> selector, StepState stepState);
+        Task<IEnumerable<Dtos.SapherStepData>> GetStepInstancesWaitingLonger(int timeoutInMinutes);
 
         Task<bool> Save(SapherStepData data);
     }

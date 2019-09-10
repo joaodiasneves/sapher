@@ -11,7 +11,7 @@
     {
         private readonly List<Model.SapherStepData> stepData = new List<Model.SapherStepData>();
 
-        public Task<Dtos.SapherStepData> Load(string stepName, string inputMessageId)
+        public Task<Dtos.SapherStepData> GetStepInstanceFromInputMessageId(string stepName, string inputMessageId)
             => Task.FromResult(this.stepData
                 .Find(sd =>
                     string.Equals(
@@ -20,33 +20,28 @@
                         StringComparison.InvariantCultureIgnoreCase))
                 ?.ToDto());
 
-        public Task<Dtos.SapherStepData> LoadFromConversationId(string stepName, string outputMessageId)
+        public Task<Dtos.SapherStepData> GetStepInstanceFromOutputMessageId(string stepName, string outputMessageId)
             => Task.FromResult(this.stepData
                 .Find(sd =>
                     string.Equals(
                         sd.StepName,
                         stepName,
                         StringComparison.InvariantCultureIgnoreCase)
-                    && sd.PublishedMessageIdsResponseState.Keys.Any(id =>
-                    string.Equals(
-                        id,
-                        outputMessageId,
-                        StringComparison.InvariantCultureIgnoreCase)))
+                    && (sd.MessagesWaitingResponse.Contains(outputMessageId)
+                        || sd.SuccessfulMessages.Contains(outputMessageId)
+                        || sd.FailedMessages.Contains(outputMessageId)
+                        || sd.CompensatedMessages.Contains(outputMessageId)))
                 ?.ToDto());
 
-        public Task UpdateInstancesState(Func<SapherStepData, bool> selector, StepState stepState)
+        public Task<IEnumerable<Dtos.SapherStepData>> GetStepInstancesWaitingLonger(int timeoutInMinutes)
         {
-            var identifiedInstances = this.stepData
-                    .Select(model => model.ToDto())
-                    .Where(dto => selector(dto));
+            bool selector(SapherStepData instance)
+                => instance.IsExpectingResponses
+                && (DateTime.UtcNow.Subtract(instance.UpdateDate)).TotalMinutes > timeoutInMinutes;
 
-            foreach (var instance in identifiedInstances)
-            {
-                instance.State = stepState;
-                this.Save(instance);
-            }
-
-            return Task.CompletedTask;
+            return Task.FromResult(this.stepData
+                .Select(model => model.ToDto())
+                .Where(dto => selector(dto)));
         }
 
         public Task<bool> Save(Dtos.SapherStepData data)

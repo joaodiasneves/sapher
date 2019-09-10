@@ -13,7 +13,13 @@
 
         internal StepState State { get; set; }
 
-        internal IDictionary<string, ResponseResultState> PublishedMessageIdsResponseState { get; set; }
+        public IList<string> MessagesWaitingResponse { get; set; }
+
+        public IList<string> SuccessfulMessages { get; set; }
+
+        public IList<string> FailedMessages { get; set; }
+
+        public IList<string> CompensatedMessages { get; set; }
 
         internal IDictionary<string, string> DataToPersist { get; set; }
 
@@ -35,7 +41,12 @@
 
             this.InputMessageSlip = inputMessageSlip;
 
-            this.PublishedMessageIdsResponseState = new Dictionary<string, ResponseResultState>();
+            this.MessagesWaitingResponse = new List<string>();
+            this.SuccessfulMessages = new List<string>();
+            this.FailedMessages = new List<string>();
+            this.CompensatedMessages = new List<string>();
+
+            this.DataToPersist = new Dictionary<string, string>();
         }
 
         internal static string GenerateId(string stepName, string messageId)

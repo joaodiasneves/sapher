@@ -111,7 +111,7 @@
         {
             // Idempotency
             var data = await this.dataRepository
-                .Load(this.StepName, messageSlip.MessageId)
+                .GetStepInstanceFromInputMessageId(this.StepName, messageSlip.MessageId)
                 .ConfigureAwait(false);
 
             if (data != null)
@@ -148,14 +148,18 @@
             result.ExecutedHandlerName = this.inputHandlerType.Name;
 
             data.DataToPersist = result.DataToPersist ?? data.DataToPersist;
-            foreach (var ouputMessageId in result.OutputMessagesIds)
-            {
-                data.PublishedMessageIdsResponseState.Add(ouputMessageId, Dtos.ResponseResultState.None);
-            }
+            data.MessagesWaitingResponse = result.OutputMessagesIds.ToList();
 
-            data.State = result.State == Dtos.InputResultState.Successful
-                ? Dtos.StepState.ExecutedInput
-                : Dtos.StepState.FailedOnExecution;
+            if (result.State == Dtos.InputResultState.Successful)
+            {
+                data.State = result.OutputMessagesIds.Any()
+                    ? Dtos.StepState.ExecutedInput
+                    : Dtos.StepState.Successful;
+            }
+            else
+            {
+                data.State = Dtos.StepState.FailedOnExecution;
+            }
 
             await this.dataRepository
                 .Save(data)
@@ -185,7 +189,7 @@
             }
 
             var data = await this.dataRepository
-                .LoadFromConversationId(this.StepName, messageSlip.ConversationId)
+                .GetStepInstanceFromOutputMessageId(this.StepName, messageSlip.ConversationId)
                 .ConfigureAwait(false);
 
             if (data != null)
@@ -212,7 +216,7 @@
                         Pair.Of("SapherCorrelationId", sapherCorrelationId));
                 }
 
-                if (data.IsMessageAlreadyProcessed(messageSlip))
+                if (data.IsMessageAlreadyProcessed(messageSlip.ConversationId))
                 {
                     throw new SapherException(
                         "This response message was already processed. Ignoring",
@@ -241,8 +245,22 @@
             MessageSlip messageSlip)
         {
             data.DataToPersist = result.DataToPersist ?? data.DataToPersist;
-            data.PublishedMessageIdsResponseState[messageSlip.ConversationId] = result.State;
-            data.UpdatedOn = DateTime.UtcNow;
+            data.MessagesWaitingResponse.Remove(messageSlip.ConversationId);
+
+            switch (result.State)
+            {
+                case ResponseResultState.Successful:
+                    data.SuccessfulMessages.Add(messageSlip.ConversationId);
+                    break;
+                case ResponseResultState.Compensated:
+                    data.CompensatedMessages.Add(messageSlip.ConversationId);
+                    break;
+                case ResponseResultState.Failed:
+                    data.FailedMessages.Add(messageSlip.ConversationId);
+                    break;
+            }
+
+            data.UpdateDate = DateTime.UtcNow;
 
             EvaluateStepState(data);
             this.dataRepository.Save(data);
@@ -250,28 +268,22 @@
 
         private void EvaluateStepState(Dtos.SapherStepData data)
         {
-            if (data.PublishedMessageIdsResponseState
-                .All(responseState =>
-                    responseState.Value != Dtos.ResponseResultState.None))
+            if (data.IsExpectingResponses)
             {
-                if (data.PublishedMessageIdsResponseState
-                    .All(responseState =>
-                        responseState.Value == Dtos.ResponseResultState.Successful))
-                {
-                    data.State = Dtos.StepState.Successful;
-                }
-                else if (data.PublishedMessageIdsResponseState
-                    .Any(responseState =>
-                        responseState.Value == Dtos.ResponseResultState.Failed))
-                {
-                    data.State = Dtos.StepState.FailedOnResponses;
-                }
-                else if (data.PublishedMessageIdsResponseState
-                    .Any(responseState =>
-                        responseState.Value == Dtos.ResponseResultState.Compensated))
-                {
-                    data.State = Dtos.StepState.Compensated;
-                }
+                return;
+            }
+
+            if (data.FailedMessages.Count > 0)
+            {
+                data.State = Dtos.StepState.FailedOnResponses;
+            }
+            else if (data.CompensatedMessages.Count > 0)
+            {
+                data.State = Dtos.StepState.Compensated;
+            }
+            else
+            {
+                data.State = Dtos.StepState.Successful;
             }
         }
 
