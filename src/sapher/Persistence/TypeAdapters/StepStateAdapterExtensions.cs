@@ -2,9 +2,9 @@
 {
     using Model = Persistence.Model;
 
-    public static class StepStateAdapterExtensions
+    internal static class StepStateAdapterExtensions
     {
-        public static Model.StepState ToDataModel(this Dtos.StepState stepState)
+        internal static Model.StepState ToDataModel(this Dtos.StepState stepState)
         {
             switch (stepState)
             {
@@ -34,7 +34,7 @@
             }
         }
 
-        public static Dtos.StepState ToDto(this Model.StepState stepState)
+        internal static Dtos.StepState ToDto(this Model.StepState stepState)
         {
             switch (stepState)
             {

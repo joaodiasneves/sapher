@@ -1,6 +1,6 @@
 ﻿namespace Sapher.Persistence.Model
 {
-    public enum ResponseResultState
+    internal enum ResponseResultState
     {
         None = 0,
         Successful = 1,

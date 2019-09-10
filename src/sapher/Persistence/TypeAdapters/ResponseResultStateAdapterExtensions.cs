@@ -2,9 +2,9 @@
 {
     using Model = Persistence.Model;
 
-    public static class ResponseResultStateAdapterExtensions
+    internal static class ResponseResultStateAdapterExtensions
     {
-        public static Model.ResponseResultState ToDataModel(this Dtos.ResponseResultState responseResultState)
+        internal static Model.ResponseResultState ToDataModel(this Dtos.ResponseResultState responseResultState)
         {
             switch (responseResultState)
             {
@@ -25,7 +25,7 @@
             }
         }
 
-        public static Dtos.ResponseResultState ToDto(this Model.ResponseResultState responseResultState)
+        internal static Dtos.ResponseResultState ToDto(this Model.ResponseResultState responseResultState)
         {
             switch (responseResultState)
             {

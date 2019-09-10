@@ -5,9 +5,9 @@
     using System.Linq;
     using Microsoft.Extensions.DependencyInjection;
 
-    public static class HandlersFactory
+    internal static class HandlersFactory
     {
-        public static bool TryToRegisterInputHandler(
+        internal static bool TryToRegisterInputHandler(
             Type inputHandlerType,
             IServiceCollection serviceCollection,
             out Type messageType,
@@ -25,7 +25,7 @@
             return result;
         }
 
-        public static bool TryToRegisterResponseHandler(
+        internal static bool TryToRegisterResponseHandler(
             Type responseHandlerType,
             IServiceCollection serviceCollection,
             out IList<Type> messageTypes,

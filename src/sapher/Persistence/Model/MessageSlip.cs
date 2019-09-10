@@ -2,26 +2,26 @@
 {
     using System;
 
-    public class MessageSlip
+    internal class MessageSlip
     {
-        public string MessageId { get; set; }
+        internal string MessageId { get; set; }
 
-        public string ConversationId { get; set; }
+        internal string ConversationId { get; set; }
 
-        public string CorrelationId { get; set; }
+        internal string CorrelationId { get; set; }
 
-        public MessageSlip(string messageId, string conversationId, string correlationId)
+        internal MessageSlip(string messageId, string conversationId, string correlationId)
         {
             this.MessageId = messageId;
             this.ConversationId = conversationId;
             this.CorrelationId = correlationId;
         }
 
-        public MessageSlip()
+        internal MessageSlip()
         {
         }
 
-        public static MessageSlip GenerateNewMessageSlip(MessageSlip previousMessageSlip)
+        internal static MessageSlip GenerateNewMessageSlip(MessageSlip previousMessageSlip)
         {
             return new MessageSlip
             {
@@ -31,7 +31,7 @@
             };
         }
 
-        public static MessageSlip GenerateNewMessageSlip()
+        internal static MessageSlip GenerateNewMessageSlip()
         {
             return new MessageSlip
             {

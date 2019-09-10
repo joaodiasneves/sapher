@@ -3,29 +3,29 @@
     using System;
     using System.Collections.Generic;
 
-    public class SapherStepData
+    internal class SapherStepData
     {
-        public string Id => GenerateId(this.StepName, this.InputMessageSlip.MessageId);
+        internal string Id => GenerateId(this.StepName, this.InputMessageSlip.MessageId);
 
-        public string StepName { get; set; }
+        internal string StepName { get; set; }
 
-        public MessageSlip InputMessageSlip { get; set; }
+        internal MessageSlip InputMessageSlip { get; set; }
 
-        public StepState State { get; set; }
+        internal StepState State { get; set; }
 
-        public IDictionary<string, ResponseResultState> PublishedMessageIdsResponseState { get; set; }
+        internal IDictionary<string, ResponseResultState> PublishedMessageIdsResponseState { get; set; }
 
-        public IDictionary<string, string> DataToPersist { get; set; }
+        internal IDictionary<string, string> DataToPersist { get; set; }
 
-        public DateTime CreationDate { get; set; }
+        internal DateTime CreationDate { get; set; }
 
-        public DateTime UpdatedOn { get; set; }
+        internal DateTime UpdatedOn { get; set; }
 
-        public SapherStepData()
+        internal SapherStepData()
         {
         }
 
-        public SapherStepData(
+        internal SapherStepData(
             MessageSlip inputMessageSlip,
             string stepName = null)
         {
@@ -38,7 +38,7 @@
             this.PublishedMessageIdsResponseState = new Dictionary<string, ResponseResultState>();
         }
 
-        public static string GenerateId(string stepName, string messageId)
+        internal static string GenerateId(string stepName, string messageId)
             => $"{stepName}-{messageId}";
     }
 }

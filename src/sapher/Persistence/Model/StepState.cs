@@ -1,6 +1,6 @@
 ﻿namespace Sapher.Persistence.Model
 {
-    public enum StepState
+    internal enum StepState
     {
         None = 0,
         ExecutedInput = 1,

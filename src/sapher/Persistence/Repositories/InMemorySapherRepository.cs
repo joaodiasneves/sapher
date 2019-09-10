@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using global::Sapher.Dtos;
+    using Dtos;
     using TypeAdapters;
 
     public class InMemorySapherRepository : ISapherDataRepository

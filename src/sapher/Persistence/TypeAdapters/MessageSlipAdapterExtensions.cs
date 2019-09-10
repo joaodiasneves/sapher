@@ -2,9 +2,9 @@
 {
     using Model = Persistence.Model;
 
-    public static class MessageSlipAdapterExtensions
+    internal static class MessageSlipAdapterExtensions
     {
-        public static Model.MessageSlip ToDataModel(this Dtos.MessageSlip messageSlip)
+        internal static Model.MessageSlip ToDataModel(this Dtos.MessageSlip messageSlip)
             => new Model.MessageSlip
             {
                 MessageId = messageSlip.MessageId,
@@ -12,7 +12,7 @@
                 CorrelationId = messageSlip.CorrelationId
             };
 
-        public static Dtos.MessageSlip ToDto(this Model.MessageSlip messageSlip)
+        internal static Dtos.MessageSlip ToDto(this Model.MessageSlip messageSlip)
             => new Dtos.MessageSlip
             {
                 MessageId = messageSlip.MessageId,
