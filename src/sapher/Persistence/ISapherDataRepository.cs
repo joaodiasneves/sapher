@@ -29,18 +29,17 @@
 
         /// <summary>
         /// Identifies all the SapherStepData instances that are still waiting for responses for longer than the time specified
-        /// in <paramref name="timeoutInMinutes"/>
+        /// in <paramref name="timeoutMs"/>
         /// </summary>
-        /// <param name="timeoutInMinutes"></param>
+        /// <param name="timeoutMs">Time in milliseconds to wait before considering execution timed out</param>
         /// <returns>The identified SapherStepData instances</returns>
         /// <remarks>SapherStepData.UpdateDate should be used to evaluate the time difference</remarks>
-        Task<IEnumerable<Dtos.SapherStepData>> GetStepInstancesWaitingLonger(int timeoutInMinutes);
+        Task<IEnumerable<Dtos.SapherStepData>> GetStepInstancesWaitingLonger(int timeoutMs);
 
         /// <summary>
         /// Upserts an instance of SapherStepData by the one provided by <paramref name="data"/>
         /// </summary>
         /// <param name="data">SapherStepData instance to be upserted</param>
-        /// <returns></returns>
-        Task<bool> Save(SapherStepData data);
+        Task Save(SapherStepData data);
     }
 }

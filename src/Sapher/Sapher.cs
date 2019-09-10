@@ -20,7 +20,7 @@
         /// <summary>
         /// Time in minutes to wait before timing out SapherStep instance execution
         /// </summary>
-        public int TimeoutInMinutes { get; private set; }
+        public int TimeoutMs { get; private set; }
 
         private readonly ISapherConfiguration configuration;
         private ILogger logger;
@@ -61,9 +61,7 @@
             where T : class
         {
             var executionOutcome = await Policy
-              .Handle<SapherException>()
-              .Or<SapherConfigurationException>()
-              .Or<Exception>()
+              .Handle<Exception>()
               .WaitAndRetryAsync(
                 this.maxRetryAttempts,
                 _ => TimeSpan.FromMilliseconds(this.retryIntervalMs))
@@ -75,7 +73,7 @@
             if (result == null)
             {
                 var finalException = executionOutcome.FinalException;
-                if (finalException.GetType() == typeof(SapherException))
+                if (finalException is SapherException)
                 {
                     this.logger.Warning(finalException);
                 }
@@ -136,7 +134,7 @@
 
         internal void SetupTimeoutPolicy()
         {
-            this.TimeoutInMinutes = this.configuration.TimeoutInMinutes;
+            this.TimeoutMs = this.configuration.TimeoutInMinutes;
         }
 
         internal void SetupSteps(IServiceProvider serviceProvider)

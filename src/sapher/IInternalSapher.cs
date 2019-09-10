@@ -4,7 +4,7 @@
 
     internal interface IInternalSapher : ISapher
     {
-        int TimeoutInMinutes { get; }
+        int TimeoutMs { get; }
 
         void Init(IServiceProvider serviceProvider);
     }

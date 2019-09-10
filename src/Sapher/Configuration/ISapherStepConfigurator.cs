@@ -1,5 +1,7 @@
 ﻿namespace Sapher.Configuration
 {
+    using Handlers;
+
     /// <summary>
     /// SapherStepConfigurator provides methods to configure a SapherStep
     /// </summary>
@@ -10,6 +12,7 @@
         /// </summary>
         /// <typeparam name="T">The implementation Type of the response handler to add</typeparam>
         /// <returns>Returns the used SapherStepConfigurator</returns>
-        ISapherStepConfigurator AddResponseHandler<T>();
+        ISapherStepConfigurator AddResponseHandler<T>()
+            where T : class, IHandlesResponse;
     }
 }

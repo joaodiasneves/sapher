@@ -8,7 +8,9 @@
     /// Defines a handler to a response message of a distributed transaction step
     /// </summary>
     /// <typeparam name="T">The response message to be handled</typeparam>
-    public interface IHandlesResponse<in T> where T : class
+    public interface IHandlesResponse<in T>
+        : IHandlesResponse
+        where T : class
     {
         /// <summary>
         /// Executes the logic defined to handle the received message
@@ -22,5 +24,13 @@
             T message,
             MessageSlip messageSlip,
             IDictionary<string, string> previouslyPersistedData);
+    }
+
+    /// <summary>
+    /// Defines a handler to a response message of a distributed transaction step
+    /// </summary>
+    public interface IHandlesResponse
+    {
+
     }
 }

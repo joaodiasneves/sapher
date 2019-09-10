@@ -34,8 +34,8 @@
             timer = new Timer(
                 async _ => await TimeoutStepInstances().ConfigureAwait(false),
                 null,
-                TimeSpan.FromMinutes(5), // TODO - Make this configurable
-                TimeSpan.FromMinutes(30));
+                0,
+                this.sapher.TimeoutMs);
 
             logger.Verbose("Timeout Background Service started.");
 
@@ -45,7 +45,7 @@
         private async Task TimeoutStepInstances()
         {
             logger.Verbose("Timeout Background Service is running.");
-            var instancesToTimeout = await this.repository.GetStepInstancesWaitingLonger(this.sapher.TimeoutInMinutes);
+            var instancesToTimeout = await this.repository.GetStepInstancesWaitingLonger(this.sapher.TimeoutMs);
 
             var tasks = new List<Task>();
 

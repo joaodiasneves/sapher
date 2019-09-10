@@ -6,8 +6,8 @@ namespace Sapher.Tests
     using System.Threading.Tasks;
     using Configuration.Extensions;
     using FluentAssertions;
+    using Handlers;
     using Microsoft.Extensions.DependencyInjection;
-    using TestHandlers;
     using Xunit;
 
     [ExcludeFromCodeCoverage]
@@ -16,6 +16,9 @@ namespace Sapher.Tests
         private readonly ServiceCollection serviceCollection;
         private readonly ServiceProvider serviceProvider;
         private readonly ISapher sapher;
+        private const int expectedRetries = 3;
+        private const int expectedRetryIntervalMs = 1;
+        private const int expectedTimeoutMs = 500;
 
         public SapherTests()
         {
@@ -25,7 +28,16 @@ namespace Sapher.Tests
                 .AddStep<TestHandler>("TestInputWithResponses", stepConfig => stepConfig
                     .AddResponseHandler<TestHandler>()
                     .AddResponseHandler<TestHandler>())
-                .AddStep<TestHandler>("TestOnlyInput"));
+                .AddStep<TestHandler>("TestIfBothStepsAreExecuted")
+                .AddStep<RetryExceptionTestHandler>("RetryExceptionTest")
+                .AddStep<RetrySapherExceptionTestHandler>("RetrySapherExceptionTest")
+                .AddStep<RetrySapherConfigurationExceptionTestHandler>("RetrySapherConfigurationExceptionTest")
+                .AddRetryPolicy(expectedRetries, expectedRetryIntervalMs));
+
+            //  .AddStep<TimeoutTestHandler>("TimeoutTest")
+            //  .AddLogger<TestLogger>()
+            //  .AddTimeoutPolicy(expectedTimeoutMs)
+            //  .AddPersistence
 
             this.serviceProvider = this.serviceCollection.BuildServiceProvider();
 
@@ -144,5 +156,106 @@ namespace Sapher.Tests
             Assert.Equal(Dtos.ResponseResultState.Successful, stepExecuted.ResponseHandlerResult.State);
             Assert.Equal(expectedDataPersisted, int.Parse(stepExecuted.ResponseHandlerResult.DataToPersist["AnswerToEverything"]));
         }
+
+        [Fact]
+        public async Task DeliverMessage_ExceptionThrown_DeliveryResultIsFailedAndContainsException()
+        {
+            // Arrange
+            var expectedExceptionMessage = "TestException";
+            var expectedException = new Exception(expectedExceptionMessage);
+            var message = new ExceptionMessage
+            {
+                ExpectedException = expectedException
+            };
+
+            var inputMessageSlip = Dtos.MessageSlip.GenerateNewMessageSlip();
+
+            // Act
+            var deliveryResult = await this.sapher
+                .DeliverMessage(
+                    message,
+                    inputMessageSlip)
+                .ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(deliveryResult);
+            Assert.NotNull(deliveryResult.StepsExecuted);
+            Assert.Empty(deliveryResult.StepsExecuted);
+            Assert.Equal(expectedRetries, RetryExceptionTestHandler.ExecutionCount);
+            Assert.True(deliveryResult.IsDeliveryFailed);
+            Assert.NotNull(deliveryResult.ErrorMessage);
+            Assert.Equal(expectedExceptionMessage, deliveryResult.ErrorMessage);
+            Assert.NotNull(deliveryResult.Exception);
+            Assert.Equal(expectedException, deliveryResult.Exception);
+        }
+
+
+        [Fact]
+        public async Task DeliverMessage_SapherExceptionThrown_DeliveryResultIsFailedAndContainsSapherException()
+        {
+            // Arrange
+            var expectedExceptionMessage = "TestSapherException";
+            var expectedException = new Exceptions.SapherException(expectedExceptionMessage);
+            var message = new SapherExceptionMessage
+            {
+                ExpectedException = expectedException
+            };
+
+            var inputMessageSlip = Dtos.MessageSlip.GenerateNewMessageSlip();
+
+            // Act
+            var deliveryResult = await this.sapher
+                .DeliverMessage(
+                    message,
+                    inputMessageSlip)
+                .ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(deliveryResult);
+            Assert.NotNull(deliveryResult.StepsExecuted);
+            Assert.Empty(deliveryResult.StepsExecuted);
+            Assert.Equal(expectedRetries, RetrySapherExceptionTestHandler.ExecutionCount);
+            Assert.True(deliveryResult.IsDeliveryFailed);
+            Assert.NotNull(deliveryResult.ErrorMessage);
+            Assert.Equal(expectedExceptionMessage, deliveryResult.ErrorMessage);
+            Assert.NotNull(deliveryResult.Exception);
+            Assert.Equal(expectedException, deliveryResult.Exception);
+        }
+
+
+        [Fact]
+        public async Task DeliverMessage_SapherConfigurationExceptionThrown_DeliveryResultIsFailedAndContainsSapherConfigurationException()
+        {
+            // Arrange
+            var expectedExceptionMessage = "TestException";
+            var expectedException = new Exceptions.SapherConfigurationException(expectedExceptionMessage);
+            var message = new SapherConfigurationExceptionMessage
+            {
+                ExpectedException = expectedException
+            };
+
+            var inputMessageSlip = Dtos.MessageSlip.GenerateNewMessageSlip();
+
+            // Act
+            var deliveryResult = await this.sapher
+                .DeliverMessage(
+                    message,
+                    inputMessageSlip)
+                .ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(deliveryResult);
+            Assert.NotNull(deliveryResult.StepsExecuted);
+            Assert.Empty(deliveryResult.StepsExecuted);
+            Assert.Equal(expectedRetries, RetrySapherConfigurationExceptionTestHandler.ExecutionCount);
+            Assert.True(deliveryResult.IsDeliveryFailed);
+            Assert.NotNull(deliveryResult.ErrorMessage);
+            Assert.Equal(expectedExceptionMessage, deliveryResult.ErrorMessage);
+            Assert.NotNull(deliveryResult.Exception);
+            Assert.Equal(expectedException, deliveryResult.Exception);
+        }
+
+        // test persistence
+        // .AddPersistence<TestRepository>()
     }
 }

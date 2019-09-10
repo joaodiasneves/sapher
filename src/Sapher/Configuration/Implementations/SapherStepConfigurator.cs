@@ -39,7 +39,7 @@
                 this.responseHandlers);
         }
 
-        public ISapherStepConfigurator AddResponseHandler<T>()
+        public ISapherStepConfigurator AddResponseHandler<T>() where T : class, IHandlesResponse
         {
             var responseHandlerType = typeof(T);
 

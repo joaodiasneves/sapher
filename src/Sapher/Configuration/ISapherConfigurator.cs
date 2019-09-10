@@ -1,6 +1,7 @@
 ﻿namespace Sapher.Configuration
 {
     using System;
+    using Handlers;
     using Logger;
     using Persistence;
 
@@ -16,7 +17,8 @@
         /// <param name="name">Step name</param>
         /// <param name="configure">Configuration action for the Step creation</param>
         /// <returns>Updated ISapherConfigurator for fluent configuration</returns>
-        ISapherConfigurator AddStep<T>(string name, Action<ISapherStepConfigurator> configure = null);
+        ISapherConfigurator AddStep<T>(string name, Action<ISapherStepConfigurator> configure = null) 
+            where T : class, IHandlesInput;
 
         /// <summary>
         /// Defines an implementation of ILogger to be used by Sapher for logging. 
@@ -47,8 +49,8 @@
         /// Defines the policy for Timeout mechanisms.
         /// If not defined, executions that are waiting responses will wait forever.
         /// </summary>
-        /// <param name="timeoutInMinutes"></param>
+        /// <param name="timeoutMs">time in milliseconds to wait before marking execution as timed out in milliseconds</param>
         /// <returns>Updated ISapherConfigurator for fluent configuration</returns>
-        ISapherConfigurator AddTimeoutPolicy(int timeoutInMinutes = 30);
+        ISapherConfigurator AddTimeoutPolicy(int timeoutMs = 30);
     }
 }

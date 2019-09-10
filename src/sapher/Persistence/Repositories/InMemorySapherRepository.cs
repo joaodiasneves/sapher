@@ -34,18 +34,18 @@
                         || sd.CompensatedMessages.Contains(outputMessageId)))
                 ?.ToDto());
 
-        public Task<IEnumerable<Dtos.SapherStepData>> GetStepInstancesWaitingLonger(int timeoutInMinutes)
+        public Task<IEnumerable<Dtos.SapherStepData>> GetStepInstancesWaitingLonger(int timeoutMs)
         {
             bool selector(SapherStepData instance)
                 => instance.IsExpectingResponses
-                && (DateTime.UtcNow.Subtract(instance.UpdateDate)).TotalMinutes > timeoutInMinutes;
+                && (DateTime.UtcNow.Subtract(instance.UpdateDate)).TotalMilliseconds > timeoutMs;
 
             return Task.FromResult(this.stepData
                 .Select(model => model.ToDto())
                 .Where(dto => selector(dto)));
         }
 
-        public Task<bool> Save(Dtos.SapherStepData data)
+        public Task Save(Dtos.SapherStepData data)
         {
             var model = data.ToDataModel();
 
@@ -56,7 +56,7 @@
             }
 
             this.stepData.Add(model);
-            return Task.FromResult(true);
+            return Task.CompletedTask;
         }
 
         private Model.SapherStepData LoadFromId(string id)

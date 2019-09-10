@@ -1,11 +1,11 @@
-﻿namespace Sapher.Tests.TestHandlers
+﻿namespace Sapher.Tests.Handlers
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Dtos;
-    using Handlers;
+    using global::Sapher.Handlers;
 
     [ExcludeFromCodeCoverage]
     public class TestInputMessage

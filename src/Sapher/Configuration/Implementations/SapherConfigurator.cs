@@ -21,7 +21,7 @@
         private bool registeredPersistence;
         private int maxRetryAttempts;
         private int retryIntervalMs;
-        private int timeoutInMinutes;
+        private int timeoutMs;
 
         internal SapherConfigurator(IServiceCollection serviceCollection)
         {
@@ -41,7 +41,7 @@
                 this.serviceCollection.AddTransient<ISapherDataRepository, InMemorySapherRepository>();
             }
 
-            return new SapherConfiguration(this.sapherSteps, this.maxRetryAttempts, this.retryIntervalMs, this.timeoutInMinutes);
+            return new SapherConfiguration(this.sapherSteps, this.maxRetryAttempts, this.retryIntervalMs, this.timeoutMs);
         }
 
         /// <summary>
@@ -54,6 +54,8 @@
         public ISapherConfigurator AddStep<T>(
             string name,
             Action<ISapherStepConfigurator> configure = null)
+            where T : class, IHandlesInput
+
         {
             var inputHandlerType = typeof(T);
 
@@ -129,11 +131,11 @@
         /// Defines the policy for Timeout mechanisms.
         /// If not defined, executions that are waiting responses will wait forever.
         /// </summary>
-        /// <param name="timeoutInMinutes"></param>
+        /// <param name="timeoutMs">time in milliseconds to wait before marking execution as timed out in milliseconds</param>
         /// <returns>Updated ISapherConfigurator for fluent configuration</returns>
-        public ISapherConfigurator AddTimeoutPolicy(int timeoutInMinutes = 30)
+        public ISapherConfigurator AddTimeoutPolicy(int timeoutMs = 30)
         {
-            this.timeoutInMinutes = timeoutInMinutes;
+            this.timeoutMs = timeoutMs;
             this.serviceCollection.AddHostedService<TimeoutHostedService>();
 
             return this;
