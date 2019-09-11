@@ -11,7 +11,7 @@ Usually, in a microservices architecture:
 4. It may or may not execute compensating operations when receiving the responses.
 
 Sapher was modelled around this 4 main ideas, represented in the following model:
-![domain_model_sapher.png](:/6b4ec581c3964c3496c561fc0aeb48b7)
+![domain_model_sapher.png](https://drive.google.com/file/d/18w9eaUIxp0Hbj3BGyhjXphoToLEE2H25/view?usp=sharing)
 
 ## Table of Contents
 * [Getting Started](#Getting-Started)
