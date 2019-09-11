@@ -3,7 +3,7 @@
 * Supports .NET Core
 * Requires Usage of ServiceCollection.
 
-[![NuGet version](https://badge.fury.io/nu/Sapher.svg)](https://badge.fury.io/nu/Sapher)
+[![NuGet version](https://badge.fury.io/nu/sapher.svg)](https://badge.fury.io/nu/sapher)
 
 ## Provided features
 * Idempotency
