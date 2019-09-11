@@ -2,8 +2,8 @@
 {
     using System;
     using System.Threading.Tasks;
-    using Dtos;
-    using Logger;
+    using Sapher.Dtos;
+    using Sapher.Logger;
 
     internal interface ISapherStep
     {
@@ -11,6 +11,6 @@
 
         void Init(IServiceProvider serviceProvider, ILogger logger);
 
-        Task<StepResult> Deliver<T>(T message, Dtos.MessageSlip messageSlip) where T : class;
+        Task<StepResult> Deliver<T>(T message, MessageSlip messageSlip) where T : class;
     }
 }
