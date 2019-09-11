@@ -28,8 +28,16 @@
         Task<Dtos.SapherStepData> GetStepInstanceFromOutputMessageId(string stepName, string outputMessageId);
 
         /// <summary>
-        /// Identifies all the SapherStepData instances that are still waiting for responses for longer than the time specified
-        /// in <paramref name="timeoutMs"/>
+        /// Finds all instances of the step specified by <paramref name="stepName"/>. Paginated with <paramref name="page"/> and <paramref name="pageSize"/>
+        /// </summary>
+        /// <param name="stepName">The name of the step to read</param>
+        /// <param name="page">The number of the page to retrieve.</param>
+        /// <param name="pageSize">The number of items to retrieve per page.</param>
+        /// <returns>Sapher information regarding the mentioned step</returns>
+        Task<IEnumerable<Dtos.SapherStepData>> GetStepInstances(string stepName, int page, int pageSize);
+
+        /// <summary>
+        /// Identifies all the SapherStepData instances that are still waiting for responses for longer than the time specified in <paramref name="timeoutMs"/>
         /// </summary>
         /// <param name="timeoutMs">Time in milliseconds to wait before considering execution timed out</param>
         /// <returns>The identified SapherStepData instances</returns>

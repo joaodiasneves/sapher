@@ -17,8 +17,10 @@
     {
         private readonly IServiceCollection serviceCollection;
         private readonly IList<ISapherStep> sapherSteps;
-        private bool registeredLogger;
-        private bool registeredPersistence;
+        private Type loggerType = typeof(NullLogger);
+        private ILogger loggerInstance;
+        private Type persistenceType = typeof(InMemorySapherRepository);
+        private ISapherDataRepository persistenceInstance;
         private int maxRetryAttempts;
         private int retryIntervalMs;
         private int timeoutMs;
@@ -31,14 +33,22 @@
 
         internal ISapherConfiguration Configure()
         {
-            if (!this.registeredLogger)
+            if (loggerInstance != null)
             {
-                this.serviceCollection.AddTransient<ILogger, NullLogger>();
+                this.serviceCollection.AddSingleton(loggerInstance);
+            }
+            else
+            {
+                this.serviceCollection.AddSingleton(typeof(ILogger), loggerType);
             }
 
-            if (!this.registeredPersistence)
+            if (persistenceInstance != null)
             {
-                this.serviceCollection.AddTransient<ISapherDataRepository, InMemorySapherRepository>();
+                this.serviceCollection.AddSingleton(persistenceInstance);
+            }
+            else
+            {
+                this.serviceCollection.AddSingleton(typeof(ISapherDataRepository), persistenceType);
             }
 
             return new SapherConfiguration(this.sapherSteps, this.maxRetryAttempts, this.retryIntervalMs, this.timeoutMs);
@@ -87,28 +97,32 @@
         }
 
         /// <summary>
-        /// Defines an implementation of ILogger to be used by Sapher for logging.
+        /// Defines an implementation of ILogger to be used by Sapher for logging. 
         /// If not defined, Sapher will not log anything.
+        /// This is used as singleton.
         /// </summary>
         /// <typeparam name="T">Implementation of ILogger</typeparam>
+        /// <param name="instance">Instance of logger to be used</param>
         /// <returns>Updated ISapherConfigurator for fluent configuration</returns>
-        public ISapherConfigurator AddLogger<T>() where T : class, ILogger
+        public ISapherConfigurator AddLogger<T>(T instance = null) where T : class, ILogger
         {
-            this.serviceCollection.AddTransient<ILogger, T>();
-            this.registeredLogger = true;
+            this.loggerInstance = instance;
+            this.loggerType = typeof(T);
             return this;
         }
 
         /// <summary>
-        /// Defines an implementation of ISapherDataRepository to be used by Sapher for persistence.
+        /// Defines an implementation of ISapherDataRepository to be used by Sapher for persistence. 
         /// If not defined, Sapher will use In Memory persistence.
+        /// This is used as singleton.
         /// </summary>
         /// <typeparam name="T">Implementation of ISapherDataRepository</typeparam>
+        /// <param name="instance">Instance of Repository to be used</param>
         /// <returns>Updated ISapherConfigurator for fluent configuration</returns>
-        public ISapherConfigurator AddPersistence<T>() where T : class, ISapherDataRepository
+        public ISapherConfigurator AddPersistence<T>(T instance = null) where T : class, ISapherDataRepository
         {
-            this.serviceCollection.AddTransient<ISapherDataRepository, T>();
-            this.registeredPersistence = true;
+            this.persistenceInstance = instance;
+            this.persistenceType = typeof(T);
             return this;
         }
 

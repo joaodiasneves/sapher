@@ -1,35 +1,44 @@
 ﻿namespace Sapher.Tests
 {
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Persistence;
+    using Persistence.Repositories;
 
-    internal class TestRepository : ISapherDataRepository
+    [ExcludeFromCodeCoverage]
+    internal class TestRepository : InMemorySapherRepository, ISapherDataRepository
     {
-        internal bool Executed { get; set; }
+        internal static bool Executed { get; set; }
 
-        public Task<Dtos.SapherStepData> GetStepInstanceFromInputMessageId(string stepName, string inputMessageId)
+        public new Task<Dtos.SapherStepData> GetStepInstanceFromInputMessageId(string stepName, string inputMessageId)
         {
-            this.Executed = true;
-            return Task.FromResult((Dtos.SapherStepData)null);
+            Executed = true;
+            return base.GetStepInstanceFromInputMessageId(stepName, inputMessageId);
         }
 
-        public Task<Dtos.SapherStepData> GetStepInstanceFromOutputMessageId(string stepName, string outputMessageId)
+        public new Task<Dtos.SapherStepData> GetStepInstanceFromOutputMessageId(string stepName, string outputMessageId)
         {
-            this.Executed = true;
-            return Task.FromResult((Dtos.SapherStepData)null);
+            Executed = true;
+            return base.GetStepInstanceFromOutputMessageId(stepName, outputMessageId);
         }
 
-        public Task<IEnumerable<Dtos.SapherStepData>> GetStepInstancesWaitingLonger(int timeoutMs)
+        public new Task<IEnumerable<Dtos.SapherStepData>> GetStepInstances(string stepName, int page, int pageSize)
         {
-            this.Executed = true;
-            return Task.FromResult((IEnumerable<Dtos.SapherStepData>)null);
+            Executed = true;
+            return base.GetStepInstances(stepName, page, pageSize);
         }
 
-        public Task Save(Dtos.SapherStepData data)
+        public new Task<IEnumerable<Dtos.SapherStepData>> GetStepInstancesWaitingLonger(int timeoutMs)
         {
-            this.Executed = true;
-            return Task.CompletedTask;
+            Executed = true;
+            return base.GetStepInstancesWaitingLonger(timeoutMs);
+        }
+
+        public new Task Save(Dtos.SapherStepData data)
+        {
+            Executed = true;
+            return base.Save(data);
         }
     }
 }

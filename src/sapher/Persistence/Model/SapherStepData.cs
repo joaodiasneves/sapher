@@ -31,23 +31,23 @@
         {
         }
 
-        internal SapherStepData(
-            MessageSlip inputMessageSlip,
-            string stepName = null)
-        {
-            this.StepName = string.IsNullOrWhiteSpace(stepName)
-                ? this.GetType().UnderlyingSystemType.Name
-                : stepName;
+        //internal SapherStepData(
+        //    MessageSlip inputMessageSlip,
+        //    string stepName = null)
+        //{
+        //    this.StepName = string.IsNullOrWhiteSpace(stepName)
+        //        ? this.GetType().UnderlyingSystemType.Name
+        //        : stepName;
 
-            this.InputMessageSlip = inputMessageSlip;
+        //    this.InputMessageSlip = inputMessageSlip;
 
-            this.MessagesWaitingResponse = new List<string>();
-            this.SuccessfulMessages = new List<string>();
-            this.FailedMessages = new List<string>();
-            this.CompensatedMessages = new List<string>();
+        //    this.MessagesWaitingResponse = new List<string>();
+        //    this.SuccessfulMessages = new List<string>();
+        //    this.FailedMessages = new List<string>();
+        //    this.CompensatedMessages = new List<string>();
 
-            this.DataToPersist = new Dictionary<string, string>();
-        }
+        //    this.DataToPersist = new Dictionary<string, string>();
+        //}
 
         internal static string GenerateId(string stepName, string messageId)
             => $"{stepName}-{messageId}";

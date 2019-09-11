@@ -23,18 +23,22 @@
         /// <summary>
         /// Defines an implementation of ILogger to be used by Sapher for logging. 
         /// If not defined, Sapher will not log anything.
+        /// This is used as singleton.
         /// </summary>
         /// <typeparam name="T">Implementation of ILogger</typeparam>
+        /// <param name="instance">Instance of logger to be used</param>
         /// <returns>Updated ISapherConfigurator for fluent configuration</returns>
-        ISapherConfigurator AddLogger<T>() where T : class, ILogger;
+        ISapherConfigurator AddLogger<T>(T instance = null) where T : class, ILogger;
 
         /// <summary>
         /// Defines an implementation of ISapherDataRepository to be used by Sapher for persistence. 
         /// If not defined, Sapher will use In Memory persistence.
+        /// This is used as singleton.
         /// </summary>
         /// <typeparam name="T">Implementation of ISapherDataRepository</typeparam>
+        /// <param name="instance">Instance of Repository to be used</param>
         /// <returns>Updated ISapherConfigurator for fluent configuration</returns>
-        ISapherConfigurator AddPersistence<T>() where T : class, ISapherDataRepository;
+        ISapherConfigurator AddPersistence<T>(T instance = null) where T : class, ISapherDataRepository;
 
         /// <summary>
         /// Defines the policy for retry mechanisms.

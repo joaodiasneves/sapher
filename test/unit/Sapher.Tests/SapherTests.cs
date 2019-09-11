@@ -32,12 +32,10 @@ namespace Sapher.Tests
                 .AddStep<RetryExceptionTestHandler>("RetryExceptionTest")
                 .AddStep<RetrySapherExceptionTestHandler>("RetrySapherExceptionTest")
                 .AddStep<RetrySapherConfigurationExceptionTestHandler>("RetrySapherConfigurationExceptionTest")
-                .AddRetryPolicy(expectedRetries, expectedRetryIntervalMs));
-
-            //  .AddStep<TimeoutTestHandler>("TimeoutTest")
-            //  .AddLogger<TestLogger>()
-            //  .AddTimeoutPolicy(expectedTimeoutMs)
-            //  .AddPersistence
+                .AddLogger<TestLogger>()
+                .AddRetryPolicy(expectedRetries, expectedRetryIntervalMs)
+                .AddTimeoutPolicy(expectedTimeoutMs)
+                .AddPersistence<TestRepository>());
 
             this.serviceProvider = this.serviceCollection.BuildServiceProvider();
 
@@ -45,6 +43,7 @@ namespace Sapher.Tests
         }
 
         [Fact]
+        [Trait("Category", "SapherSetup")]
         public void UseSapher_RequireISapherFromDi_ReturnsTheSameObject()
         {
             // Act
@@ -55,6 +54,8 @@ namespace Sapher.Tests
         }
 
         [Fact]
+        [Trait("Category", "DeliverMessage")]
+        [Trait("Category", "UnitTest")]
         public async Task DeliverMessage_InputOfTwoSteps_TwoStepResultsWithResponseResultNull()
         {
             // Arrange
@@ -89,9 +90,14 @@ namespace Sapher.Tests
                 Assert.Equal(expectedOutputId, outputId);
                 Assert.Equal(Dtos.InputResultState.Successful, stepExecuted.InputHandlerResult.State);
             }
+
+            Assert.True(TestRepository.Executed);
+            TestRepository.Executed = false;
         }
 
         [Fact]
+        [Trait("Category", "DeliverMessage")]
+        [Trait("Category", "UnitTest")]
         public async Task DeliverMessage_ValidResponseMessageBeforeInput_OneStepResultWithResultsNull()
         {
             // Act
@@ -111,9 +117,14 @@ namespace Sapher.Tests
                 Assert.Null(stepExecuted.InputHandlerResult);
                 Assert.Null(stepExecuted.ResponseHandlerResult);
             }
+
+            Assert.True(TestRepository.Executed);
+            TestRepository.Executed = false;
         }
 
         [Fact]
+        [Trait("Category", "DeliverMessage")]
+        [Trait("Category", "UnitTest")]
         public async Task DeliverMessage_ResponseMessageAfterInput_OneStepResultWithValidResponses()
         {
             // Arrange
@@ -155,13 +166,18 @@ namespace Sapher.Tests
             Assert.NotNull(stepExecuted.ResponseHandlerResult);
             Assert.Equal(Dtos.ResponseResultState.Successful, stepExecuted.ResponseHandlerResult.State);
             Assert.Equal(expectedDataPersisted, int.Parse(stepExecuted.ResponseHandlerResult.DataToPersist["AnswerToEverything"]));
+
+            Assert.True(TestRepository.Executed);
+            TestRepository.Executed = false;
         }
 
         [Fact]
+        [Trait("Category", "DeliverMessage")]
+        [Trait("Category", "UnitTest")]
         public async Task DeliverMessage_ExceptionThrown_DeliveryResultIsFailedAndContainsException()
         {
             // Arrange
-            var expectedExceptionMessage = "TestException";
+            const string expectedExceptionMessage = "TestException";
             var expectedException = new Exception(expectedExceptionMessage);
             var message = new ExceptionMessage
             {
@@ -189,12 +205,13 @@ namespace Sapher.Tests
             Assert.Equal(expectedException, deliveryResult.Exception);
         }
 
-
         [Fact]
+        [Trait("Category", "DeliverMessage")]
+        [Trait("Category", "UnitTest")]
         public async Task DeliverMessage_SapherExceptionThrown_DeliveryResultIsFailedAndContainsSapherException()
         {
             // Arrange
-            var expectedExceptionMessage = "TestSapherException";
+            const string expectedExceptionMessage = "TestSapherException";
             var expectedException = new Exceptions.SapherException(expectedExceptionMessage);
             var message = new SapherExceptionMessage
             {
@@ -222,12 +239,13 @@ namespace Sapher.Tests
             Assert.Equal(expectedException, deliveryResult.Exception);
         }
 
-
         [Fact]
+        [Trait("Category", "DeliverMessage")]
+        [Trait("Category", "UnitTest")]
         public async Task DeliverMessage_SapherConfigurationExceptionThrown_DeliveryResultIsFailedAndContainsSapherConfigurationException()
         {
             // Arrange
-            var expectedExceptionMessage = "TestException";
+            const string expectedExceptionMessage = "TestException";
             var expectedException = new Exceptions.SapherConfigurationException(expectedExceptionMessage);
             var message = new SapherConfigurationExceptionMessage
             {
@@ -255,7 +273,186 @@ namespace Sapher.Tests
             Assert.Equal(expectedException, deliveryResult.Exception);
         }
 
-        // test persistence
-        // .AddPersistence<TestRepository>()
+        [Fact]
+        [Trait("Category", "DeliverMessage")]
+        [Trait("Category", "UnitTest")]
+        public async Task DeliverMessage_ExceptionThrown_ExceptionLoggedAsError()
+        {
+            // Arrange
+            const string expectedExceptionMessage = "TestException";
+            var expectedException = new Exception(expectedExceptionMessage);
+            var message = new ExceptionMessage
+            {
+                ExpectedException = expectedException
+            };
+
+            const Logger.LoggingEventType expectedLogLevel = Logger.LoggingEventType.Error;
+
+            var inputMessageSlip = Dtos.MessageSlip.GenerateNewMessageSlip();
+
+            // Act
+            var deliveryResult = await this.sapher
+                .DeliverMessage(
+                    message,
+                    inputMessageSlip)
+                .ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(deliveryResult.Exception);
+            Assert.Equal(deliveryResult.Exception, TestLogger.ReceivedLogEntry.Exception);
+            Assert.Equal(expectedException, TestLogger.ReceivedLogEntry.Exception);
+            Assert.Equal(expectedExceptionMessage, TestLogger.ReceivedLogEntry.Message);
+            Assert.Equal(expectedLogLevel, TestLogger.ReceivedLogEntry.Severity);
+        }
+
+        [Fact]
+        [Trait("Category", "DeliverMessage")]
+        [Trait("Category", "UnitTest")]
+        public async Task DeliverMessage_SapherExceptionThrown_ExceptionLoggedAsWarning()
+        {
+            // Arrange
+            const string expectedExceptionMessage = "TestSapherException";
+            var expectedException = new Exceptions.SapherException(expectedExceptionMessage);
+            var message = new SapherExceptionMessage
+            {
+                ExpectedException = expectedException
+            };
+
+            const Logger.LoggingEventType expectedLogLevel = Logger.LoggingEventType.Warning;
+
+            var inputMessageSlip = Dtos.MessageSlip.GenerateNewMessageSlip();
+
+            // Act
+            var deliveryResult = await this.sapher
+                .DeliverMessage(
+                    message,
+                    inputMessageSlip)
+                .ConfigureAwait(false);
+
+            // Assert
+            Assert.NotNull(deliveryResult.Exception);
+            Assert.Equal(deliveryResult.Exception, TestLogger.ReceivedLogEntry.Exception);
+            Assert.Equal(expectedException, TestLogger.ReceivedLogEntry.Exception);
+            Assert.Equal(expectedExceptionMessage, TestLogger.ReceivedLogEntry.Message);
+            Assert.Equal(expectedLogLevel, TestLogger.ReceivedLogEntry.Severity);
+        }
+       
+        [Fact]
+        [Trait("Category", "DeliverMessage")]
+        [Trait("Category", "UnitTest")]
+        public async Task GetStepInstance_RetrievesInstanceValidInfo()
+        {
+            // Arrange
+            var expectedOutputMessageId = Guid.NewGuid().ToString();
+            const int expectedValue = 42;
+            var message = new TestInputMessage
+            {
+                SimulatedOutputMessageId = expectedOutputMessageId,
+                Value = expectedValue
+            };
+
+            var inputMessageSlip = Dtos.MessageSlip.GenerateNewMessageSlip();
+            const string  expectedStepName = "TestInputWithResponses";
+
+            await this.sapher
+               .DeliverMessage(
+                   message,
+                   inputMessageSlip,
+                   expectedStepName)
+               .ConfigureAwait(false);
+
+            // Act
+            var dataRetrieved = await this.sapher.GetStepInstance(expectedStepName, inputMessageSlip.MessageId).ConfigureAwait(false);
+
+            // Assert
+            Assert.Equal(Dtos.StepState.ExecutedInput, dataRetrieved.State);
+            Assert.Equal(expectedValue.ToString(), dataRetrieved.DataToPersist["AnswerToEverything"]);
+            Assert.Single(dataRetrieved.MessagesWaitingResponse);
+            Assert.Equal(expectedOutputMessageId, dataRetrieved.MessagesWaitingResponse.Single());
+            Assert.Equal(inputMessageSlip.MessageId, dataRetrieved.InputMessageSlip.MessageId);
+            Assert.Equal(inputMessageSlip.ConversationId, dataRetrieved.InputMessageSlip.ConversationId);
+            Assert.Equal(inputMessageSlip.CorrelationId, dataRetrieved.InputMessageSlip.CorrelationId);
+            Assert.Equal(expectedStepName, dataRetrieved.StepName);
+            Assert.Empty(dataRetrieved.CompensatedMessages);
+            Assert.Empty(dataRetrieved.FailedMessages);
+            Assert.Empty(dataRetrieved.SuccessfulMessages);
+
+            Assert.True(TestRepository.Executed);
+            TestRepository.Executed = false;
+        }
+
+        [Fact]
+        [Trait("Category", "DeliverMessage")]
+        [Trait("Category", "UnitTest")]
+        public async Task GetStepInstances_RetrievesInstancesValidInfo()
+        {
+            // Arrange
+            var expectedOutputMessageId = Guid.NewGuid().ToString();
+            const int expectedValue = 42;
+
+            var inputMessageSlip1 = Dtos.MessageSlip.GenerateNewMessageSlip();
+            var inputMessageSlip2 = Dtos.MessageSlip.GenerateNewMessageSlip();
+
+            var message1 = new TestInputMessage
+            {
+                SimulatedOutputMessageId = expectedOutputMessageId,
+                Value = expectedValue
+            };
+
+            var message2 = new TestInputMessage
+            {
+                SimulatedOutputMessageId = expectedOutputMessageId,
+                Value = expectedValue
+            };
+
+            const string expectedStepName = "TestInputWithResponses";
+
+            await this.sapher
+               .DeliverMessage(
+                   message1,
+                   inputMessageSlip1,
+                   expectedStepName)
+               .ConfigureAwait(false);
+
+            await this.sapher
+              .DeliverMessage(
+                  message2,
+                  inputMessageSlip2,
+                  expectedStepName)
+              .ConfigureAwait(false);
+
+            // Act
+            var dataRetrieved = await this.sapher.GetStepInstances(expectedStepName).ConfigureAwait(false);
+
+            // Assert
+            var dataRetrieved1 = dataRetrieved.First();
+            Assert.Equal(Dtos.StepState.ExecutedInput, dataRetrieved1.State);
+            Assert.Equal(expectedValue.ToString(), dataRetrieved1.DataToPersist["AnswerToEverything"]);
+            Assert.Single(dataRetrieved1.MessagesWaitingResponse);
+            Assert.Equal(expectedOutputMessageId, dataRetrieved1.MessagesWaitingResponse.Single());
+            Assert.Equal(inputMessageSlip1.MessageId, dataRetrieved1.InputMessageSlip.MessageId);
+            Assert.Equal(inputMessageSlip1.ConversationId, dataRetrieved1.InputMessageSlip.ConversationId);
+            Assert.Equal(inputMessageSlip1.CorrelationId, dataRetrieved1.InputMessageSlip.CorrelationId);
+            Assert.Equal(expectedStepName, dataRetrieved1.StepName);
+            Assert.Empty(dataRetrieved1.CompensatedMessages);
+            Assert.Empty(dataRetrieved1.FailedMessages);
+            Assert.Empty(dataRetrieved1.SuccessfulMessages);
+
+            var dataRetrieved2 = dataRetrieved.Last();
+            Assert.Equal(Dtos.StepState.ExecutedInput, dataRetrieved2.State);
+            Assert.Equal(expectedValue.ToString(), dataRetrieved2.DataToPersist["AnswerToEverything"]);
+            Assert.Single(dataRetrieved2.MessagesWaitingResponse);
+            Assert.Equal(expectedOutputMessageId, dataRetrieved2.MessagesWaitingResponse.Single());
+            Assert.Equal(inputMessageSlip2.MessageId, dataRetrieved2.InputMessageSlip.MessageId);
+            Assert.Equal(inputMessageSlip2.ConversationId, dataRetrieved2.InputMessageSlip.ConversationId);
+            Assert.Equal(inputMessageSlip2.CorrelationId, dataRetrieved2.InputMessageSlip.CorrelationId);
+            Assert.Equal(expectedStepName, dataRetrieved2.StepName);
+            Assert.Empty(dataRetrieved2.CompensatedMessages);
+            Assert.Empty(dataRetrieved2.FailedMessages);
+            Assert.Empty(dataRetrieved2.SuccessfulMessages);
+
+            Assert.True(TestRepository.Executed);
+            TestRepository.Executed = false;
+        }
     }
 }

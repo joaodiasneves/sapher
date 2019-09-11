@@ -7,6 +7,7 @@
     using Configuration;
     using Dtos;
     using Exceptions;
+    using Persistence;
     using Logger;
     using Logger.Extensions;
     using Microsoft.Extensions.DependencyInjection;
@@ -24,6 +25,7 @@
 
         private readonly ISapherConfiguration configuration;
         private ILogger logger;
+        private ISapherDataRepository dataRepository;
         private IEnumerable<ISapherStep> steps = new List<ISapherStep>();
         private int maxRetryAttempts;
         private int retryIntervalMs;
@@ -40,6 +42,8 @@
         public void Init(IServiceProvider serviceProvider)
         {
             this.logger = serviceProvider.GetRequiredService<ILogger>();
+            this.dataRepository = serviceProvider.GetRequiredService<ISapherDataRepository>();
+
             SetupSteps(serviceProvider);
             SetupRetryPolicy();
             SetupTimeoutPolicy();
@@ -91,6 +95,29 @@
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Provides current information regarding an instance specified with <paramref name="stepName"/> and <paramref name="inputMessageId"/>
+        /// </summary>
+        /// <param name="stepName">The name of the step to read</param>
+        /// <param name="inputMessageId">The name of the input message id in order to identify the correct step instance</param>
+        /// <returns>Sapher information regarding the mentioned step</returns>
+        public Task<SapherStepData> GetStepInstance(string stepName, string inputMessageId)
+        {
+            return this.dataRepository.GetStepInstanceFromInputMessageId(stepName, inputMessageId);
+        }
+
+        /// <summary>
+        /// Provides information regarding all instances of the step specified by <paramref name="stepName"/>. Paginated with <paramref name="page"/> and <paramref name="pageSize"/>
+        /// </summary>
+        /// <param name="stepName">The name of the step to read</param>
+        /// <param name="page">The number of the page to retrieve.</param>
+        /// <param name="pageSize">The number of items to retrieve per page.</param>
+        /// <returns>Sapher information regarding the mentioned step</returns>
+        public Task<IEnumerable<SapherStepData>> GetStepInstances(string stepName, int page = 0, int pageSize = 100)
+        {
+            return this.dataRepository.GetStepInstances(stepName, page, pageSize);
         }
 
         internal async Task<DeliveryResult> ExecuteDelivery<T>(

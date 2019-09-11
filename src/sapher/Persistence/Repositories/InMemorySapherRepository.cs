@@ -34,6 +34,17 @@
                         || sd.CompensatedMessages.Contains(outputMessageId)))
                 ?.ToDto());
 
+        public Task<IEnumerable<SapherStepData>> GetStepInstances(string stepName, int page, int pageSize)
+            => Task.FromResult(this.stepData
+                .FindAll(sd =>
+                    string.Equals(
+                        sd.StepName,
+                        stepName,
+                        StringComparison.InvariantCultureIgnoreCase))
+                .Skip(page * pageSize)
+                .Take(pageSize)
+                .Select(model => model.ToDto()));
+
         public Task<IEnumerable<Dtos.SapherStepData>> GetStepInstancesWaitingLonger(int timeoutMs)
         {
             bool selector(SapherStepData instance)
@@ -42,7 +53,7 @@
 
             return Task.FromResult(this.stepData
                 .Select(model => model.ToDto())
-                .Where(dto => selector(dto)));
+                .Where(selector));
         }
 
         public Task Save(Dtos.SapherStepData data)
