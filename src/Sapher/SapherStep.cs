@@ -6,9 +6,9 @@
     using System.Threading.Tasks;
     using Configuration;
     using Dtos;
-    using global::Sapher.Exceptions;
-    using global::Sapher.Logger.Extensions;
-    using global::Sapher.Utils;
+    using Exceptions;
+    using Logger.Extensions;
+    using Utils;
     using Handlers;
     using Logger;
     using Microsoft.Extensions.DependencyInjection;
@@ -252,9 +252,11 @@
                 case ResponseResultState.Successful:
                     data.SuccessfulMessages.Add(messageSlip.ConversationId);
                     break;
+
                 case ResponseResultState.Compensated:
                     data.CompensatedMessages.Add(messageSlip.ConversationId);
                     break;
+
                 case ResponseResultState.Failed:
                     data.FailedMessages.Add(messageSlip.ConversationId);
                     break;

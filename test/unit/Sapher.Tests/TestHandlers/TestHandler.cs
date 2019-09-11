@@ -5,7 +5,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
     using Dtos;
-    using global::Sapher.Handlers;
+    using Sapher.Handlers;
 
     [ExcludeFromCodeCoverage]
     public class TestInputMessage

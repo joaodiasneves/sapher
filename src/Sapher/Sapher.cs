@@ -16,7 +16,7 @@
     /// <summary>
     /// Base class for Sapher execution
     /// </summary>
-    public class Sapher : IInternalSapher
+    public class Sapherman : IInternalSapher
     {
         /// <summary>
         /// Time in minutes to wait before timing out SapherStep instance execution
@@ -30,7 +30,7 @@
         private int maxRetryAttempts;
         private int retryIntervalMs;
 
-        internal Sapher(ISapherConfiguration configuration)
+        internal Sapherman(ISapherConfiguration configuration)
         {
             this.configuration = configuration;
         }

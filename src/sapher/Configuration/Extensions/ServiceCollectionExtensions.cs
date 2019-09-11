@@ -33,7 +33,7 @@
             configure(sapherConfigurator);
             var sapherConfiguration = sapherConfigurator.Configure();
 
-            var sapher = new Sapher(sapherConfiguration);
+            var sapher = new Sapherman(sapherConfiguration);
             serviceCollection.AddSingleton<ISapher>(sapher);
             serviceCollection.AddSingleton<IInternalSapher>(sapher);
 

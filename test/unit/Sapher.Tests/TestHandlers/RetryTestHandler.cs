@@ -3,7 +3,7 @@
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
-    using global::Sapher.Handlers;
+    using Sapher.Handlers;
 
     [ExcludeFromCodeCoverage]
     internal class ExceptionMessage
