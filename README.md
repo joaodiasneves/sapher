@@ -40,7 +40,7 @@ This project uses [SemVer](http://semver.org/) for versioning. For the versions 
 See also the list of [contributors](https://github.com/joaodiasneves/sapher/contributors) who participated in this project.
 
 ## License
-This project is licensed under the Apache 2.0 license - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT license - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 For being inspiration and references for this project:
