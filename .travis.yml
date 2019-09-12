@@ -1,9 +1,10 @@
-language: csharp
-dist: xenial
-mono: none
+language: csharp  
+mono: none  
 dotnet: 2.2
-install:
-- dotnet restore
+dist: trusty 
+
 script:
+- cd src/sapher
+- dotnet restore
 - dotnet build
 - dotnet test test/unit/Sapher.Tests/Sapher.Tests.csproj
