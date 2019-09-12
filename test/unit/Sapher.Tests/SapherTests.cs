@@ -336,7 +336,7 @@ namespace Sapher.Tests
             Assert.Equal(expectedExceptionMessage, TestLogger.ReceivedLogEntry.Message);
             Assert.Equal(expectedLogLevel, TestLogger.ReceivedLogEntry.Severity);
         }
-       
+
         [Fact]
         [Trait("Category", "DeliverMessage")]
         [Trait("Category", "UnitTest")]
