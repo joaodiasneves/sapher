@@ -1,5 +1,5 @@
 # Sapher - *Sa*ga Choreogra*pher*
-[![NuGet version](https://badge.fury.io/nu/sapher.svg)](https://badge.fury.io/nu/sapher)
+[![NuGet version](https://badge.fury.io/nu/sapher.svg)](https://badge.fury.io/nu/sapher) [![Build Status](https://travis-ci.com/joaodiasneves/sapher.svg?branch=master)](https://travis-ci.com/joaodiasneves/sapher)
 
 Sapher seeks to help developers implement communication between services in a microservices context, and was built with **choreographed sagas** in mind - more context [here](https://github.com/joaodiasneves/sapher/wiki/01.-Context).
 
