@@ -7,12 +7,12 @@
     using Configuration;
     using Dtos;
     using Exceptions;
-    using Logger.Extensions;
-    using Utils;
     using Handlers;
     using Logger;
+    using Logger.Extensions;
     using Microsoft.Extensions.DependencyInjection;
     using Persistence;
+    using Utils;
 
     internal class SapherStep : ISapherStep
     {

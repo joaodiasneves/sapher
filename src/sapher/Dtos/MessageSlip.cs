@@ -31,8 +31,8 @@
         /// <param name="conversationId">The conversationId.
         ///Sshould be the messageId of the message that originated this message.
         ///If the message is the first message of the distributed transaction, this should be left null</param>
-        /// <param name="correlationId">The unique identifier of a distributed transaction. 
-        /// Should be the same for all messages of a single distributed transaction. 
+        /// <param name="correlationId">The unique identifier of a distributed transaction.
+        /// Should be the same for all messages of a single distributed transaction.
         /// If no value is provided, a new Guid will be generated.</param>
         public MessageSlip(string messageId = null, string conversationId = null, string correlationId = null)
         {

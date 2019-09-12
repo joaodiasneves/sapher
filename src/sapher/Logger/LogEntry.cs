@@ -67,8 +67,8 @@
         /// <param name="message">The message of the LogEntry</param>
         /// <param name="exception">The exception of the LogEntry. This is optional.</param>
         /// <param name="additionalData">Additional data to add to the LogEntry. This is optional.</param>
-        /// <exception cref = "System.ArgumentNullException"><paramref name="message"/> is null</exception> 
-        /// <exception cref = "System.ArgumentException"><paramref name="message"/> is empty or whitespace</exception> 
+        /// <exception cref = "System.ArgumentNullException"><paramref name="message"/> is null</exception>
+        /// <exception cref = "System.ArgumentException"><paramref name="message"/> is empty or whitespace</exception>
         public LogEntry(
             LoggingEventType severity,
             string message,

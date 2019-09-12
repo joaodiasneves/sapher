@@ -352,7 +352,7 @@ namespace Sapher.Tests
             };
 
             var inputMessageSlip = Dtos.MessageSlip.GenerateNewMessageSlip();
-            const string  expectedStepName = "TestInputWithResponses";
+            const string expectedStepName = "TestInputWithResponses";
 
             await this.sapher
                .DeliverMessage(

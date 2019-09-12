@@ -17,7 +17,7 @@
         /// </summary>
         /// <param name="message">Received response message</param>
         /// <param name="messageSlip">MessageSlip of the message, containing its identifiers</param>
-        /// <param name="previouslyPersistedData">Data provided to be persisted in the distributed transaction step input execution 
+        /// <param name="previouslyPersistedData">Data provided to be persisted in the distributed transaction step input execution
         /// - provided by the InputResult returned by the InputHandler's execute method</param>
         /// <returns>ResponseResult instance, containing the result of the execution</returns>
         Task<ResponseResult> Execute(
@@ -31,6 +31,5 @@
     /// </summary>
     public interface IHandlesResponse
     {
-
     }
 }

@@ -17,11 +17,11 @@
         /// <param name="name">Step name</param>
         /// <param name="configure">Configuration action for the Step creation</param>
         /// <returns>Updated ISapherConfigurator for fluent configuration</returns>
-        ISapherConfigurator AddStep<T>(string name, Action<ISapherStepConfigurator> configure = null) 
+        ISapherConfigurator AddStep<T>(string name, Action<ISapherStepConfigurator> configure = null)
             where T : class, IHandlesInput;
 
         /// <summary>
-        /// Defines an implementation of ILogger to be used by Sapher for logging. 
+        /// Defines an implementation of ILogger to be used by Sapher for logging.
         /// If not defined, Sapher will not log anything.
         /// This is used as singleton.
         /// </summary>
@@ -31,7 +31,7 @@
         ISapherConfigurator AddLogger<T>(T instance = null) where T : class, ILogger;
 
         /// <summary>
-        /// Defines an implementation of ISapherDataRepository to be used by Sapher for persistence. 
+        /// Defines an implementation of ISapherDataRepository to be used by Sapher for persistence.
         /// If not defined, Sapher will use In Memory persistence.
         /// This is used as singleton.
         /// </summary>

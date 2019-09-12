@@ -6,7 +6,7 @@
     [ExcludeFromCodeCoverage]
     internal class TestLogger : ILogger
     {
-        public static LogEntry ReceivedLogEntry{ get; set; }
+        public static LogEntry ReceivedLogEntry { get; set; }
 
         public void Log(LogEntry entry)
         {

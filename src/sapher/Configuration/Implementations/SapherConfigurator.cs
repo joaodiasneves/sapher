@@ -97,7 +97,7 @@
         }
 
         /// <summary>
-        /// Defines an implementation of ILogger to be used by Sapher for logging. 
+        /// Defines an implementation of ILogger to be used by Sapher for logging.
         /// If not defined, Sapher will not log anything.
         /// This is used as singleton.
         /// </summary>
@@ -112,7 +112,7 @@
         }
 
         /// <summary>
-        /// Defines an implementation of ISapherDataRepository to be used by Sapher for persistence. 
+        /// Defines an implementation of ISapherDataRepository to be used by Sapher for persistence.
         /// If not defined, Sapher will use In Memory persistence.
         /// This is used as singleton.
         /// </summary>

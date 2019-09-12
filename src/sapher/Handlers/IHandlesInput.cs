@@ -25,6 +25,5 @@
     /// </summary>
     public interface IHandlesInput
     {
-
     }
 }

@@ -8,6 +8,7 @@
     using TypeAdapters;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+
     public class InMemorySapherRepository : ISapherDataRepository
     {
         private readonly List<Model.SapherStepData> stepData = new List<Model.SapherStepData>();
@@ -78,4 +79,5 @@
                     StringComparison.InvariantCultureIgnoreCase));
     }
 }
+
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member

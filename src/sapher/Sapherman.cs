@@ -7,10 +7,10 @@
     using Configuration;
     using Dtos;
     using Exceptions;
-    using Persistence;
     using Logger;
     using Logger.Extensions;
     using Microsoft.Extensions.DependencyInjection;
+    using Persistence;
     using Polly;
 
     /// <summary>
