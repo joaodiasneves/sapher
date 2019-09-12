@@ -10,12 +10,15 @@ Usually, in a microservices architecture:
 3. Each step naturally has a single input and can expect multiple responses depending on the input execution.
 4. It may or may not execute compensating operations when receiving the responses.
 
-Sapher is modelled around these 4 main ideas, represented in the following model:
-![model](https://github.com/joaodiasneves/sapher/blob/master/docs/images/domain_model_sapher.png)
+Sapher is modelled around these 4 main ideas, which are detailed and represented [here](https://github.com/joaodiasneves/sapher/wiki/02.-Domain-model)
 
 ## Getting Started
 
-Please read [USAGE.md](https://github.com/joaodiasneves/sapher/blob/master/docs/USAGE.md) to start using Sapher.
+Please read [the guide](https://github.com/joaodiasneves/sapher/blob/master/docs/USAGE.md) to start using Sapher.
+
+## Documentation
+
+More details are provided in [wiki](https://github.com/joaodiasneves/sapher/wiki) pages.
 
 ## Built With
 * [Polly](https://github.com/App-vNext/Polly) - Used to implement Retry policies.
@@ -24,10 +27,6 @@ Please read [USAGE.md](https://github.com/joaodiasneves/sapher/blob/master/docs/
 
 Sapher provides extension points for Persistence and Logging. 
 Please read [EXTENSIBILITY.md](https://github.com/joaodiasneves/sapher/blob/master/docs/EXTENSIBILITY.md) to understand how you can do this.
-
-## Documentation
-
-(Work in progress)
 
 ## Contributing
 Please read [CONTRIBUTING.md](https://github.com/joaodiasneves/sapher/blob/master/CONTRIBUTING.md) for details on the code of conduct, and the process for submitting pull requests to this project.
