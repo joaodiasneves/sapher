@@ -51,7 +51,7 @@ Sapher allows the definition of clear interfaces for step input handling, and re
 The first step of Sapher setup should be to define those interfaces.
 
 #### Input Handler
-```
+```c#
 using Sapher.Handlers
 
 public class ExampleInputHandler : IHandlesInput<InputMessage>
@@ -85,7 +85,7 @@ public class ExampleInputHandler : IHandlesInput<InputMessage>
 **InputResult.DataToPersist** is used to persist information that may be used for ResponseHandlers (for instance, for compensating operations).
 
 #### Response Handler
-```
+```c#
 using Sapher.Handlers
 
 public class ExampleResponseHandler : IHandlesResponse<ResponseMessage>
@@ -125,7 +125,7 @@ The response handler can modify this data, and following response handlers will 
 
 #### Configuration
 To wire things up, lets assume the handlers described above belong to the same step. Their configuration would be as follows:
-```
+```c#
 this.serviceCollection.AddSapher(sapherConfig => sapherConfig
     .AddStep<ExampleInputHandler>("ExampleStepName", stepConfig => stepConfig
         .AddResponseHandler<ExampleResponseHandler>()
@@ -146,7 +146,7 @@ In the example above, three steps were defined. The first, has an input and two 
 #### Message Delivery
 After implementing all the required handlers and setting up Sapher configuration, it is now time for some action. When receiving a message, either via HTTP, a message broker, or any other way, you can use `ISapher` to deliver it to your handlers. Using `Microsoft.Extensions.DependencyInjection`, `ISapher` will be injected in your code. 
 Therefore, all you have to do, is to execute the following steps:
-```
+```c#
 var deliveryResult = await this.sapher
     .DeliverMessage(
         new InputMessage
@@ -165,7 +165,7 @@ If not successful, `DeliveryResult` provides information regarding the error occ
 
 #### Retrieving Step state
 To obtain persisted information regarding a SapherStep, you can do the following:
-```
+```c#
 // option 1
 var dataRetrieved = await this.sapher.GetStepInstance(stepName, inputMessageId);
 
@@ -196,11 +196,11 @@ Install-Package Sapher
 
 ## Extensibility
 **Persistence** engine can be extended by implementing `ISapherDataRepository`
-```
+```c#
 MyRepositoryImplementation : ISapherDataRepository
 ```
 and providing the implementation with `AddPersistence`.
-```
+```c#
 this.serviceCollection
     .AddSapher(sapherConfig => sapherConfig
         .AddPersistence<MyRepositoryImplementation>());
@@ -216,11 +216,11 @@ this.serviceCollection
 **Notes:** `ISapherDataRepository` is used as a singleton. Also, if an implementation is not defined, Sapher will use in-memory persistence.
 
 **Logging** engine can also be extended by implementing `ILogger`
-```
+```c#
 MyLogger : ILogger
 ```
 and providing the implementation with `AddLogger`
-```
+```c#
 this.serviceCollection
     .AddSapher(sapherConfig => sapherConfig
         .AddLogger<MyLogger>());
