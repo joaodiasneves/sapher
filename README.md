@@ -6,12 +6,12 @@ Sapher seeks to help developers implement communication between services in a mi
 Usually, in a microservices architecture:
 
 1. A business process spans across multiple services.
-2. Each service executes its own step of the process. 
-3. Each step naturally has a single input, and can expect multiple responses depending on the input execution.
+2. Each service executes its step of the process. 
+3. Each step naturally has a single input and can expect multiple responses depending on the input execution.
 4. It may or may not execute compensating operations when receiving the responses.
 
-Sapher was modelled around this 4 main ideas, represented in the following model:
-![domain_model_sapher.png](https://drive.google.com/file/d/18w9eaUIxp0Hbj3BGyhjXphoToLEE2H25/view?usp=sharing)
+Sapher is modelled around these 4 main ideas, represented in the following model:
+![model](https://github.com/joaodiasneves/sapher/blob/master/docs/images/domain_model_sapher.png)
 
 ## Getting Started
 
@@ -23,7 +23,7 @@ Please read [USAGE.md](https://github.com/joaodiasneves/sapher/blob/master/docs/
 ## Extensibility
 
 Sapher provides extension points for Persistence and Logging. 
-Please read [EXTENSIBILITY.md](https://github.com/joaodiasneves/sapher/blob/master/docs/EXTENSIBILITY.md) to understand how you can do this
+Please read [EXTENSIBILITY.md](https://github.com/joaodiasneves/sapher/blob/master/docs/EXTENSIBILITY.md) to understand how you can do this.
 
 ## Documentation
 
