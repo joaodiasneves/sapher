@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2003
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29306.81
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher", "src\Sapher\Sapher.csproj", "{B977F251-B39E-4988-B2C9-01EDBA76424E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher.Tests", "test\unit\Sapher.Tests\Sapher.Tests.csproj", "{B1D6FA78-590B-4E74-B288-304E379F0DEB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sapher", "src\sapher\Sapher.csproj", "{AB0F59B8-1EFD-4A81-B735-BC5E58ED8A2E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B977F251-B39E-4988-B2C9-01EDBA76424E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B977F251-B39E-4988-B2C9-01EDBA76424E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B977F251-B39E-4988-B2C9-01EDBA76424E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B977F251-B39E-4988-B2C9-01EDBA76424E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B1D6FA78-590B-4E74-B288-304E379F0DEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B1D6FA78-590B-4E74-B288-304E379F0DEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1D6FA78-590B-4E74-B288-304E379F0DEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1D6FA78-590B-4E74-B288-304E379F0DEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB0F59B8-1EFD-4A81-B735-BC5E58ED8A2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB0F59B8-1EFD-4A81-B735-BC5E58ED8A2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB0F59B8-1EFD-4A81-B735-BC5E58ED8A2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB0F59B8-1EFD-4A81-B735-BC5E58ED8A2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
